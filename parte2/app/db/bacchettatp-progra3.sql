@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 13-06-2022 a las 05:54:28
+-- Tiempo de generación: 14-06-2022 a las 22:37:33
 -- Versión del servidor: 10.4.24-MariaDB
 -- Versión de PHP: 8.1.4
 
@@ -72,15 +72,10 @@ CREATE TABLE `empleados` (
 --
 
 INSERT INTO `empleados` (`id`, `nombre`, `clave`, `puesto`, `puntaje`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(12, 'Tomás', 1234, 'Mozo', 0, '2022-06-12 23:13:53.000000', '2022-06-12 23:13:53.000000', NULL),
-(13, 'Tomás', 1234, 'Mozo', 0, '2022-06-13 04:35:32.000000', '2022-06-13 04:35:32.000000', NULL),
-(14, 'Tomás', 1234, 'Mozo', 0, '2022-06-13 04:36:58.000000', '2022-06-13 04:36:58.000000', NULL),
-(15, 'Tomás', 1234, 'Bartender', 0, '2022-06-13 04:37:07.000000', '2022-06-13 04:37:07.000000', NULL),
-(16, 'Tomáss', 1234, 'Bartender', 0, '2022-06-13 04:39:09.000000', '2022-06-13 04:39:09.000000', NULL),
-(17, 'Pancho', 1234, 'Mozo', 0, '2022-06-13 07:42:40.000000', '2022-06-13 07:42:40.000000', NULL),
-(18, 'Ignacio', 1234, 'Bartender', 0, '2022-06-13 07:43:23.000000', '2022-06-13 07:43:23.000000', NULL),
-(19, 'Mauricio', 1234, 'Cervecero', 0, '2022-06-13 07:44:29.000000', '2022-06-13 07:44:29.000000', NULL),
-(20, 'Mauricio2', 1234, 'Cocinero', 0, '2022-06-13 08:02:08.000000', '2022-06-13 08:02:08.000000', NULL);
+(22, 'Tomi_Mozo', 1234, 'Mozo', 0, '2022-06-15 00:31:09.000000', '2022-06-15 00:31:09.000000', NULL),
+(32, 'Tomi_Cervecero', 1234, 'Cervecero', 0, '2022-06-15 00:34:04.000000', '2022-06-15 00:34:04.000000', NULL),
+(33, 'Tomi_Cocinero', 1234, 'Cocinero', 0, '2022-06-15 00:34:13.000000', '2022-06-15 00:34:13.000000', NULL),
+(34, 'Tomi_Bartender', 1234, 'Bartender', 0, '2022-06-15 00:34:26.000000', '2022-06-15 00:34:26.000000', NULL);
 
 -- --------------------------------------------------------
 
@@ -119,8 +114,8 @@ CREATE TABLE `mesas` (
 --
 
 INSERT INTO `mesas` (`id`, `estado`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(10000, 'Cerrada', '2022-06-13 07:07:37.000000', '2022-06-13 07:10:13.000000', '2022-06-13 07:10:13.000000'),
-(10001, 'Cerrada', '2022-06-13 07:09:04.000000', '2022-06-13 07:09:04.000000', NULL);
+(10001, 'Con cliente comiendo', '2022-06-13 07:09:04.000000', '2022-06-15 01:25:10.000000', NULL),
+(10002, 'Cerrada', '2022-06-14 02:14:50.000000', '2022-06-15 00:28:36.000000', NULL);
 
 -- --------------------------------------------------------
 
@@ -143,6 +138,14 @@ CREATE TABLE `ordens` (
   `updated_at` timestamp(6) NULL DEFAULT NULL,
   `deleted_at` timestamp(6) NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `ordens`
+--
+
+INSERT INTO `ordens` (`id`, `pedido_id`, `producto_id`, `empleado_id`, `descripcion`, `cantidad`, `subtotal`, `tiempo_inicio`, `tiempo_estimado`, `estado`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(46, 31, 17, 22, 'Daikiri', 1, 200, '2022-06-14 19:39:33.263643', '00:05:00', 'Listo para servir', '2022-06-15 00:36:43.000000', '2022-06-15 00:39:33.000000', NULL),
+(47, 32, 17, 22, 'Daikiri', 1, 200, '2022-06-14 20:26:02.925853', '00:05:00', 'Preparada', '2022-06-15 01:17:07.000000', '2022-06-15 01:26:02.000000', NULL);
 
 -- --------------------------------------------------------
 
@@ -168,7 +171,8 @@ CREATE TABLE `pedidos` (
 --
 
 INSERT INTO `pedidos` (`id`, `mesa_id`, `mozo_id`, `total`, `tiempo_estimado`, `estado`, `foto_mesa`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(18, 1000, 1, 0, '', 'Con orden', 'FotosMesas/18@mesa.jpg', '2022-06-12 23:11:45.000000', '2022-06-12 23:28:47.000000', NULL);
+(31, 10001, 22, 0, '00:05:00', 'Servido', 'FotosMesas/31@10001-mesa.jpg', '2022-06-15 00:35:34.000000', '2022-06-15 00:41:50.000000', NULL),
+(32, 10001, 22, 0, '00:05:00', 'Listo para servir', 'FotosMesas/32@10001-mesa.jpg', '2022-06-15 01:16:47.000000', '2022-06-15 01:20:59.000000', NULL);
 
 -- --------------------------------------------------------
 
@@ -194,12 +198,10 @@ CREATE TABLE `productos` (
 
 INSERT INTO `productos` (`id`, `descripcion`, `precio`, `stock`, `sector`, `tiempo_estimado`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (8, 'Coca-Cola 600ml', 200, 94, 'Barra', '00:05:00', '2022-06-08 06:56:37.000000', '2022-06-13 07:13:45.000000', '2022-06-13 07:13:45.000000'),
-(10, 'Cerveza', 200, 100, 'Barra', '00:05:00', '2022-06-08 06:57:13.000000', '2022-06-08 09:35:07.000000', '2022-06-08 09:35:07.000000'),
 (11, 'Cerveza', 200, 100, 'Barra_Choperas', '00:05:00', '2022-06-13 07:14:22.000000', '2022-06-13 07:14:22.000000', NULL),
 (12, 'Coca-Cola 600ml', 200, 100, 'Cocina', '00:05:00', '2022-06-13 07:58:55.000000', '2022-06-13 07:58:55.000000', NULL),
-(13, 'Torta', 200, 100, 'Candy_Bar', '00:05:00', '2022-06-13 08:01:32.000000', '2022-06-13 08:01:32.000000', NULL),
-(14, 'Petete', 200, 100, 'Candy_Bar', '00:05:00', '2022-06-13 08:25:26.000000', '2022-06-13 08:25:26.000000', NULL),
-(15, 'Petetee', 200, 100, 'Candy_Bar', '00:05:00', '2022-06-13 08:26:14.000000', '2022-06-13 08:26:14.000000', NULL);
+(13, 'Torta', 200, 94, 'Candy_Bar', '00:05:00', '2022-06-13 08:01:32.000000', '2022-06-14 02:22:56.000000', NULL),
+(17, 'Daikiri', 200, 92, 'Barra_Tragos', '00:05:00', '2022-06-14 02:09:30.000000', '2022-06-15 01:17:07.000000', NULL);
 
 --
 -- Índices para tablas volcadas
@@ -261,7 +263,7 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT de la tabla `empleados`
 --
 ALTER TABLE `empleados`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT de la tabla `encuestas`
@@ -273,25 +275,25 @@ ALTER TABLE `encuestas`
 -- AUTO_INCREMENT de la tabla `mesas`
 --
 ALTER TABLE `mesas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10002;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10003;
 
 --
 -- AUTO_INCREMENT de la tabla `ordens`
 --
 ALTER TABLE `ordens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -18,20 +18,22 @@ class OrdenController {
 
     public function CargarUno($request, $response, $args){
         $param = $request->getParsedBody();
+        $header = $request->getHeaderLine('Authorization');
+        $token = trim(explode("Bearer", $header)[1]);
+
         $ordenNueva = new Orden();
         $ordenNueva->pedido_id = $param["pedido_id"];
         $ordenNueva->producto_id = $param["producto_id"];
-        $ordenNueva->empleado_id = $param["empleado_id"];
+        $ordenNueva->empleado_id = AutentificadorJWT::ObtenerId($token);
         $ordenNueva->cantidad = $param["cantidad"];
         
        
-        
         $producto = producto::where("id", $ordenNueva->producto_id)->first();
 
         $ordenNueva->descripcion = $producto->descripcion;
         $ordenNueva->subtotal = $producto->precio * $ordenNueva->cantidad;
         $ordenNueva->tiempo_estimado = $producto->tiempo_estimado;
-        $ordenNueva->estado = "Iniciada";
+        $ordenNueva->estado = "Abierta";
         
         $ordenNueva->save();
 
@@ -46,9 +48,9 @@ class OrdenController {
         
         $pedidoActualizado = pedido::where("id", $ordenNueva->pedido_id)->first();
         $pedidoActualizado->total = orden::where("id", $ordenNueva->pedido_id)->sum("subtotal");
-        $pedidoActualizado->tiempo_estimado = orden::where("id", $ordenNueva->pedido_id)->max("tiempo_estimado");
+        $pedidoActualizado->tiempo_estimado = orden::where("pedido_id", $ordenNueva->pedido_id)->max("tiempo_estimado");
         $pedidoActualizado->estado = "Con orden";
-
+        
         $pedidoActualizado->save();
 
 
@@ -83,7 +85,7 @@ class OrdenController {
     }
 
     public function TraerTodos($request, $response, $args){
-        $ordenes = orden::all();
+        $ordenes = orden::orderBy("pedido_id", "desc");
         $payload = json_encode(array("listaOrdenes" => $ordenes));
 
         $response->getBody()->write($payload);
@@ -99,7 +101,6 @@ class OrdenController {
         $ordenModificada = new Orden();
         $ordenModificada->pedido_id = $param["pedido_id"];
         $ordenModificada->producto_id = $param["producto_id"];
-        $ordenModificada->empleado_id = $param["empleado_id"];
 
         //reincorporando stock al producto
         $producto = producto::where("id", $ordenModificada->producto_id)->first();
@@ -144,16 +145,53 @@ class OrdenController {
     public function CambiarEstado($request, $response, $args){
         $param = $request->getParsedBody();
         $id = $args["id"];
-        
-        $pedidoModificado = pedido::where("id", $id)->first();
-        $pedidoModificado->estado = $param["estado"];
-        
-
-        $pedidoModificado->save();
+        $header = $request->getHeaderLine('Authorization');
+        $token = trim(explode("Bearer", $header)[1]);
+        $ordenModificada = orden::where("id", $id)->first();
+        $ordenModificada->estado = $param["estado"];
         
 
+        
 
-        $payload = json_encode(array("mensaje" => "Estado de la orden cambiado a " . $param["estado"] . " exitosamente"));
+        $pedido_id = orden::where("id", $id)->value("pedido_id");
+
+        if ($ordenModificada->estado == "En preparacion"){
+            //el empleado idoneo toma una orden Abierta y la cambia a "en preparancion
+            //si esta fue la ultima orden que se necesitaba preparar para el pedido
+            //vinculado, el pedido pasa a estar En Preparacion
+            //ademas, la orden pasa a estar vinculada al empleado
+
+            $ordenModificada->empleado_id = AutentificadorJWT::ObtenerId($token);
+
+            $ordenes = orden::ObtenerOrdenesAbiertasPorPedido($pedido_id);
+            if (!$ordenes){//si todas las ordenes vinculadas al pedido ya se encuentran  en preparacion preparadas
+                $pedido = pedido::where("id", $pedido_id)->first();
+                $pedido->estado = "En preparacion";
+                $pedido->save();
+            }
+            
+        }
+        $ordenModificada->save();
+
+        if ($ordenModificada->estado == "Listo para servir"){
+            //el empleado idoneo toma una orden En Preparacion y la cambia a Preparada
+            //si esta fue la ultima orden que se necesitaba preparar para el pedido
+            //vinculado, el pedido pasa a estar En Preparacion
+            
+            $ordenes = orden::ObtenerOrdenesAbiertasPorPedido($pedido_id);
+            if (!$ordenes){//si ya no hay ordenes abiertas
+                $pedido = pedido::where("id", $pedido_id)->first();
+                $pedido->estado = "Listo para servir";
+                $pedido->save();
+            }
+            
+        }
+
+        
+        
+
+
+        $payload = json_encode(array("mensaje" => "Estado de la orden cambiado a " . $param["estado"]));
 
         $response->getBody()->write($payload);
 

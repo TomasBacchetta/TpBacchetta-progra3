@@ -100,33 +100,33 @@ $app->group("/mesas", function (RouteCollectorProxy $group) {
   $group->get('[/]', \MesaController::class . ':TraerTodos');
   $group->get('/{id}', \MesaController::class . ':TraerUno');
   $group->post('[/]', \MesaController::class . ':CargarUno');
-  $group->put('/{id}', \MesaController::class . ':ModificarUno');
+  $group->put('/{id}', \MesaController::class . ':CambiarEstado');
   $group->delete('/{id}', \MesaController::class . ':BorrarUno');
 })->add(\ValidadorParams::class . ':ValidarParamsMesas')->add(\Logger::class . ':VerificarAdminOMozo')->add(\MiddleWareJWT::class . ':validarToken');
 
 $app->group("/productos", function (RouteCollectorProxy $group){
   $group->get('[/]', \ProductoController::class . ':TraerTodos')->add(\FiltrosListas::class . ':FiltrarVistaProductos');
   $group->get('/{id}', \ProductoController::class . ':TraerUno');
-  $group->post('[/]', \ProductoController::class . ':CargarUno')->add(\Logger::class . ':VerificarAdmin');
+  $group->post('[/]', \ProductoController::class . ':CargarUno')->add(\ValidadorParams::class . ':ValidarParamsProductos')->add(\Logger::class . ':VerificarAdmin');
   $group->put('/{id}', \ProductoController::class . ':ModificarUno')->add(\Logger::class . ':VerificarAdmin');
   $group->delete('/{id}', \ProductoController::class . ':BorrarUno')->add(\Logger::class . ':VerificarAdmin');
 
-})->add(\ValidadorParams::class . ':ValidarParamsProductos')->add(\MiddleWareJWT::class . ':validarToken');
-
-$app->group("/pedidos", function (RouteCollectorProxy $group){
-  $group->get('[/]', \PedidoController::class . ':TraerTodos');
-  $group->get('/{id}', \PedidoController::class . ':TraerUno');
-  $group->post('[/]', \PedidoController::class . ':CargarUno');
-  $group->post('/{id}', \PedidoController::class . ':CambiarEstado');
-  $group->put('/{id}', \PedidoController::class . ':ModificarUno');
-  $group->delete('/{id}', \PedidoController::class . ':BorrarUno');
 })->add(\MiddleWareJWT::class . ':validarToken');
 
+$app->group("/pedidos", function (RouteCollectorProxy $group){
+  $group->get('[/]', \PedidoController::class . ':TraerTodos')->add(\FiltrosListas::class . ':FiltrarVistaPedidos');;
+  $group->get('/{id}', \PedidoController::class . ':TraerUno');
+  $group->post('[/]', \PedidoController::class . ':CargarUno')->add(\ValidadorParams::class . ':ValidarParamsCargaPedidos')->add(\Logger::class . ":VerificarMozo");
+  $group->post('/{id}', \PedidoController::class . ':CambiarEstado')->add(\Logger::class . ":VerificarMozo");
+  $group->put('/{id}', \PedidoController::class . ':ModificarUno')->add(\Logger::class . ":VerificarMozo");
+  $group->delete('/{id}', \PedidoController::class . ':BorrarUno');
+})->add(\Logger::class . ":VerificarAdminOMozo")->add(\MiddlewareJWT::class . ':validarToken');
+
 $app->group("/ordenes", function (RouteCollectorProxy $group){
-  $group->get('[/]', \OrdenController::class . ':TraerTodos');
+  $group->get('[/]', \OrdenController::class . ':TraerTodos')->add(\FiltrosListas::class . ':FiltrarVistaOrdenes');
   $group->get('/{id}', \OrdenController::class . ':TraerUno');
-  $group->post('[/]', \OrdenController::class . ':CargarUno');
-  $group->post('/{id}', \OrdenController::class . ':CambiarEstado');
+  $group->post('[/]', \OrdenController::class . ':CargarUno')->add(\Logger::class . ":VerificarMozo");
+  $group->post('/{id}', \OrdenController::class . ':CambiarEstado')->add(\Logger::class . ':VerificarEmpleadoEspecifico');
   $group->put('/{id}', \OrdenController::class . ':ModificarUno');
   $group->delete('/{id}', \OrdenController::class . ':BorrarUno');
 })->add(\MiddleWareJWT::class . ':validarToken');

@@ -47,6 +47,16 @@ class empleado extends Model{
         }
         
     }
+
+    public static function existeMozo($id){
+        $empleado = empleado::where("id", $id)->where("puesto", "Mozo")->first();
+        if (isset($empleado)){
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
     
 }
 

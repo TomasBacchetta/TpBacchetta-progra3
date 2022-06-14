@@ -4,7 +4,9 @@ use GuzzleHttp\Psr7\Response;
 use Psr7Middlewares\Middleware\Payload;
 use \App\Models\admin as admin;
 use App\Models\empleado as empleado;
-use App\Models\producto;
+use App\Models\producto as producto;
+use App\Models\mesa as mesa;
+
 
 class ValidadorParams {
 
@@ -155,6 +157,7 @@ class ValidadorParams {
 
     public static function ValidarParamsMesas($request, $handler){
         $method = $request->getMethod();
+       
         
         $response = new Response();
 
@@ -176,7 +179,6 @@ class ValidadorParams {
                 } else {//si existe el parametro
                     if ($dato["estado"] == "" || (
                         $dato["estado"] != "Con cliente esperando pedido" &&
-                        $dato["estado"] != "Con cliente comiendo" &&
                         $dato["estado"] != "Con cliente pagando" &&
                         $dato["estado"] != "Cerrada"
                         )){
@@ -287,12 +289,7 @@ class ValidadorParams {
                 
                
                 
-                if ($error){
-                    
-                    $payload = json_encode(array("Mensaje" => $mensaje));
-                    $response->getBody()->write($payload);
-                    return $response->withStatus(403); 
-                }
+                
                 
                     
             }
@@ -307,13 +304,87 @@ class ValidadorParams {
           
     }
 
-    
+
+    public static function ValidarParamsCargaPedidos($request, $handler){
+        $response = new Response();
+        $mensaje = "";
+        $error = false;
+
+        $dato = $request->getParsedBody();
+        
+        
+        
+        if (!isset($dato)){
+            $payload = json_encode(array("Mensaje" => "Faltan todos los parametros"));
+            $response->getBody()->write($payload);
+            return $response->withStatus(403);
+            
+        } else {
+            if (!array_key_exists("mesa_id", $dato)){
+                $mensaje .= "Falta la id de la mesa. ";
+                $error = true;   
+            } else {//si existe el parametro
+                if (!mesa::existeMesa($dato["mesa_id"])){
+                    $mensaje .= "No existe esa mesa. ";
+                    $error = true;
+                }
+                if ($dato["mesa_id"] == "" || is_nan($dato["mesa_id"])){
+                    $mensaje .= "Id de mesa invalido. ";
+                    $error = true;
+                }
+            }         
+            
+            //foto
+            if (isset($_FILES["archivo"])){
+            
+            $destino = "archivos/" . $_FILES["archivo"]["name"];
+            $tipoArchivo = pathinfo($destino, PATHINFO_EXTENSION);
+
+            if ($_FILES["archivo"]["size"] > 5000000) {//5mb
+                $mensaje .= "Superado el tamaño maximo de archivo (5mb) ";
+                $error = true;
+            }
+            
+            $esImagen = getimagesize($_FILES["archivo"]["tmp_name"]);
+
+            if($esImagen == true) {
+                if($tipoArchivo != "jpg" && $tipoArchivo != "jpeg" && $tipoArchivo != "png") {
+                    $mensaje .= "Formato de la imagen invalido. Solo se admite .jpg, .jpeg y .png";
+                    $error = true;
+                }
+            }
+            else {
+                    $mensaje .= "El archivo no es una imagen";
+                    $error = true;
+            
+            }
+            } else {
+                $mensaje .= "No se subio la foto. ";
+                $error = true;
+            }
+
+            if ($error){
+                    
+            $payload = json_encode(array("Mensaje" => $mensaje));
+            $response->getBody()->write($payload);
+            return $response->withStatus(403); 
+        } 
+        
+        }
+
+        
+
+        $response = $handler->handle($request);
+        return $response;
+
+            
+            
+        
+    }
+
 
     
-
+   
     
 }
-
-
-
 ?>

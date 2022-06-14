@@ -7,7 +7,7 @@ class AutentificadorJWT
     private static $claveSecreta = 'at%$as';
     private static $tipoEncriptacion = ['HS256'];
 
-    public static function CrearToken($puesto)
+    public static function CrearToken($puesto, $id)
     {
         $ahora = time();
         $payload = array(
@@ -15,6 +15,7 @@ class AutentificadorJWT
             'exp' => $ahora + (60000),
             'aud' => self::Aud(),
             'puesto' => $puesto,
+            'id' => $id,
             'app' => "Test JWT"
         );
         return JWT::encode($payload, self::$claveSecreta);
@@ -59,6 +60,15 @@ class AutentificadorJWT
             self::$claveSecreta,
             self::$tipoEncriptacion
         )->puesto;
+    }
+
+    public static function ObtenerId($token)
+    {
+        return JWT::decode(
+            $token,
+            self::$claveSecreta,
+            self::$tipoEncriptacion
+        )->id;
     }
 
     private static function Aud()

@@ -53,7 +53,7 @@ class MesaController {
 
     }
 
-    public function ModificarUno($request, $response, $args){
+    public function CambiarEstado($request, $response, $args){
         $param = $request->getParsedBody();
         $id = $args["id"];
         $estado = $param["estado"];
@@ -69,6 +69,8 @@ class MesaController {
         return $response->withHeader("Content-Type", "application/json");
 
     }
+
+    
 
 
     public function BorrarUno($request, $response, $args){

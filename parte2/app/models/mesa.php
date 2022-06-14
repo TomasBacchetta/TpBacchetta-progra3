@@ -31,7 +31,15 @@ class mesa extends Model{
 
    use SoftDeletes;
 
-    
+    public static function existeMesa($id){
+        $mesa = mesa::where("id", $id)->first();
+        if (isset($mesa)){
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
 }
 
 

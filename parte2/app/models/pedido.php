@@ -38,7 +38,41 @@ class pedido extends Model{
     ];
 
     use SoftDeletes;
-    
+
+    public static function ObtenerPedidosDelMozo($mozo_id){
+        
+        $pedidos = pedido::where("mozo_id", $mozo_id)->get();
+        $arrayPedidos = array();
+        foreach ($pedidos as $ePedido){
+            $ordenesDelPedido = orden::where("pedido_id", $ePedido->id)->orderBy("id", "desc")->get();
+            $jsonPedido = json_encode($ePedido);  
+            $jsonOrdenesDelPedido = json_encode($ordenesDelPedido);
+            $arrayCombinado = array("pedido" => json_decode($jsonPedido, true),
+                        "ordenes" => json_decode($jsonOrdenesDelPedido, true)
+        );
+        array_push($arrayPedidos, $arrayCombinado);
+        }
+
+        return $arrayPedidos;
+    }
+    /*
+
+    public static function ObtenerPedidosAbiertosPorSector($sector){
+        $pedidos = pedido::where("sector", $sector)->where("estado", "Abierto")->get();
+        $arrayPedidos = array();
+        foreach ($pedidos as $ePedido){
+            $ordenesDelPedido = orden::where("pedido_id", $ePedido->id)->get();
+            $jsonPedido = json_encode($ePedido);  
+            $jsonOrdenesDelPedido = json_encode($ordenesDelPedido);
+            $arrayCombinado = array("pedido" => json_decode($jsonPedido, true),
+                        "ordenes" => json_decode($jsonOrdenesDelPedido, true)
+        );
+        array_push($arrayPedidos, $arrayCombinado);
+        }
+
+        return $arrayPedidos;
+    }
+    */
     /*
     public function orden()
     {

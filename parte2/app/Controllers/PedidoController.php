@@ -19,15 +19,17 @@ class PedidoController {
 
     public function CargarUno($request, $response, $args){
         $param = $request->getParsedBody();
+        $header = $request->getHeaderLine('Authorization');
+        $token = trim(explode("Bearer", $header)[1]);
 
         $pedidoNuevo = new Pedido();
 
         $pedidoNuevo->mesa_id = $param["mesa_id"];
-        $pedidoNuevo->mozo_id = $param["mozo_id"];
+        $pedidoNuevo->mozo_id = AutentificadorJWT::ObtenerId($token);
     
         $pedidoNuevo->estado = "Abierto";
-    
         
+
         $pedidoNuevo->save();
 
         $id = $pedidoNuevo->id;
@@ -36,21 +38,12 @@ class PedidoController {
         if (!file_exists('FotosMesas/')) {
             mkdir('FotosMesas/', 0777, true);
         }
-        $destino = "FotosMesas/" . $id . "@" . $_FILES["archivo"]["name"];
+        $destino = "FotosMesas/" . $id . "@" . $param["mesa_id"] . "-" . $_FILES["archivo"]["name"];
         move_uploaded_file($_FILES["archivo"]["tmp_name"], $destino);
 
-        /*
-        $pedidoActualizado = new Pedido();
-
-        foreach (get_object_vars(Pedido::obtenerPedido($id)) as $key => $value) {
-            $pedidoActualizado->$key = $value;
-        }
-        
-      
-        */
-
+    
         //actualizando estado de la mesa
-        $mesa = mesa::where("mesa_id", $pedidoNuevo->mesa_id)->first();
+        $mesa = mesa::where("id", $pedidoNuevo->mesa_id)->first();
         $mesa->estado = "Con cliente esperando pedido";
 
         $mesa->save();
@@ -86,7 +79,7 @@ class PedidoController {
 
 
     public function TraerTodos($request, $response, $args){
-        $pedidos = pedido::all();
+        $pedidos = pedido::orderBy("id", "desc")->get();
         $arrayPedidos = array();
         foreach ($pedidos as $ePedido){
             $ordenesDelPedido = orden::where("pedido_id", $ePedido->id)->get();
@@ -113,7 +106,6 @@ class PedidoController {
         
         $pedidoModificado = pedido::where("id", $id)->first();
         $pedidoModificado->mesa_id = $param["mesa_id"];
-        $pedidoModificado->mozo_id = $param["mozo_id"];
         $pedidoModificado->estado = $param["estado"];
         
 
@@ -132,15 +124,21 @@ class PedidoController {
 
     public function CambiarEstado($request, $response, $args){
         $param = $request->getParsedBody();
+        
         $id = $args["id"];
         
         $pedidoModificado = pedido::where("id", $id)->first();
         $pedidoModificado->estado = $param["estado"];
-        
 
         $pedidoModificado->save();
-        
 
+        
+        if ($param["estado"] == "Servido"){
+            $mesa = mesa::where("id", $pedidoModificado->mesa_id)->first();
+            $mesa->estado = "Con cliente comiendo";
+            $mesa->save();
+            
+        }
 
         $payload = json_encode(array("mensaje" => "Estado del pedido cambiado a " . $param["estado"] . " exitosamente"));
 

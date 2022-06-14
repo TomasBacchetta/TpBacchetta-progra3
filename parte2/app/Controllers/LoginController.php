@@ -14,13 +14,16 @@ class LoginController {
 
 
         if (empleado::verificarEmpleado($nombre, $clave)){
-            $tokenNuevo = AutentificadorJWT::CrearToken(empleado::where("nombre", $nombre)->value("puesto"));
+            $tokenNuevo = AutentificadorJWT::CrearToken(
+                empleado::where("nombre", $nombre)->value("puesto"), 
+                empleado::where("nombre", $nombre)->value("id")
+            );
             $response->getBody()->write(json_encode(array("token"=>$tokenNuevo)));
 
             return $response;
         }
         if (admin::verificarAdmin($nombre, $clave)){
-            $tokenNuevo = AutentificadorJWT::CrearToken("admin");
+            $tokenNuevo = AutentificadorJWT::CrearToken("admin", 999);
             $response->getBody()->write(json_encode(array("token"=>$tokenNuevo)));
 
             return $response;
