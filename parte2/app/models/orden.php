@@ -84,6 +84,23 @@ class orden extends Model{
         }
     }
 
+    public static function SiOrdenEsDelSectorDelEmpleado($id, $empleado_id){
+        $orden = orden::where("id", $id)->first();
+        $sectorProducto = producto::where("id", $orden->producto_id)->value("sector");
+        $puestoEmpleado = empleado::where("id", $empleado_id)->value("puesto");
+        if ($puestoEmpleado == "Cocinero" && ($sectorProducto == "Cocina" || $sectorProducto == "Candy_Bar")){
+            return true;
+        }
+        if ($puestoEmpleado == "Bartender" && $sectorProducto == "Barra_Tragos"){
+            return true;
+        }
+        if ($puestoEmpleado == "Cervecero" && $sectorProducto == "Barra_Choperas"){
+            return true;
+        }
+        return false;
+        
+    }
+
     public static function ObtenerOrdenesPorSector($sector){
         $ordenes = Capsule::table('ordens')
         ->join('productos', 'productos.id', '=', 'ordens.producto_id')

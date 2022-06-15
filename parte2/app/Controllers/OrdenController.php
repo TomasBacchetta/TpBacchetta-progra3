@@ -47,7 +47,7 @@ class OrdenController {
         //actualizando pedido (la orden nueva condiciona al pedido)
         
         $pedidoActualizado = pedido::where("id", $ordenNueva->pedido_id)->first();
-        $pedidoActualizado->total = orden::where("id", $ordenNueva->pedido_id)->sum("subtotal");
+        $pedidoActualizado->total = orden::where("pedido_id", $ordenNueva->pedido_id)->sum("subtotal");
         $pedidoActualizado->tiempo_estimado = orden::where("pedido_id", $ordenNueva->pedido_id)->max("tiempo_estimado");
         $pedidoActualizado->estado = "Con orden";
         
@@ -151,7 +151,7 @@ class OrdenController {
         $ordenModificada->estado = $param["estado"];
         
 
-        
+        $ordenModificada->save();
 
         $pedido_id = orden::where("id", $id)->value("pedido_id");
 
@@ -162,7 +162,7 @@ class OrdenController {
             //ademas, la orden pasa a estar vinculada al empleado
 
             $ordenModificada->empleado_id = AutentificadorJWT::ObtenerId($token);
-
+            $ordenModificada->save();
             $ordenes = orden::ObtenerOrdenesAbiertasPorPedido($pedido_id);
             if (!$ordenes){//si todas las ordenes vinculadas al pedido ya se encuentran  en preparacion preparadas
                 $pedido = pedido::where("id", $pedido_id)->first();
@@ -171,7 +171,7 @@ class OrdenController {
             }
             
         }
-        $ordenModificada->save();
+        
 
         if ($ordenModificada->estado == "Listo para servir"){
             //el empleado idoneo toma una orden En Preparacion y la cambia a Preparada

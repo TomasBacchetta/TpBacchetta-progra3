@@ -81,14 +81,14 @@ class Logger {
         $url = $request->getUri()->getPath();
         $id_orden = explode('/', $url)[2];
         $response = new Response();
-        
+        $id_empleado = AutentificadorJWT::ObtenerId($token);        
 
-        if (orden::SiOrdenEsDelEmpleado($id_orden, AutentificadorJWT::ObtenerId($token)) ||
-            orden::ObtenerEstadoPorId($id_orden) == "Abierta"){
+        if (orden::SiOrdenEsDelEmpleado($id_orden, $id_empleado) ||
+            (orden::ObtenerEstadoPorId($id_orden) == "Abierta" && orden::SiOrdenEsDelSectorDelEmpleado($id_orden, $id_empleado))){
             $response = $handler->handle($request); //ejecuta la funcion del controller
             return $response;
         } else {
-            $payload = json_encode(array("Mensaje" => "Esta orden no es suya"));
+            $payload = json_encode(array("Mensaje" => "Esta orden no es suya, o no es de su sector"));
             $response->getBody()->write($payload);
             return $response->withStatus(403);
         }
