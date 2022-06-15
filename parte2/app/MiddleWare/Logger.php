@@ -70,10 +70,32 @@ class Logger {
             return $response->withStatus(403);
         }
         
+        
+    }
+
+    public static function VerificarNoMozo($request, $handler)
+    {
+        $header = $request->getHeaderLine('Authorization');
+        $token = trim(explode("Bearer", $header)[1]);
+
+        $response = new Response();
+        
+
+        if (AutentificadorJWT::ObtenerPuesto($token) != "Mozo"){
+            $response = $handler->handle($request); //ejecuta la funcion del controller
+            return $response;
+        } else {
+            $payload = json_encode(array("Mensaje" => "Los mozos no pueden acceder a las ordenes. Acceso denegado"));
+            $response->getBody()->write($payload);
+            
+            return $response->withStatus(403);
+        }
+        
 
         
         
     }
+
 
     public static function VerificarEmpleadoEspecifico($request, $handler){
         $header = $request->getHeaderLine('Authorization');

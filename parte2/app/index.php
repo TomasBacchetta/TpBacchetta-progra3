@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Redis;
 require __DIR__ . '/../vendor/autoload.php';
 
 require_once './Middleware/AutentificadorJWT.php';
+require_once './Middleware/AutentificadorJWT_Clientes.php';
 require_once './Middleware/MiddlewareJWT.php';
 require_once './Middleware/Logger.php';
 require_once './Middleware/ValidadorParams.php';
@@ -33,7 +34,8 @@ require_once './Middleware/FiltrosListas.php';
 
 require_once "./Controllers/LoginController.php";
 
-
+require_once './models/encuesta.php';
+require_once "./Controllers/EncuestaController.php";
 require_once './models/empleado.php';
 require_once "./Controllers/EmpleadoController.php";
 require_once "./models/mesa.php";
@@ -86,7 +88,7 @@ $app->group("/admins", function (RouteCollectorProxy $group) {
   $group->post('[/]', \AdminController::class . ':CargarUno');
   $group->put('/{id}', \AdminController::class . ':ModificarUno');
   $group->delete('/{id}', \AdminController::class . ':BorrarUno');
-})->add(\ValidadorParams::class . ':ValidarParamsAdmins')->add(\Logger::class . ':VerificarAdmin')->add(\MiddlewareJWT::class . ':ValidarToken');
+})->add(\ValidadorParams::class . ':ValidarParamsAdmins')->add(\Logger::class . ':VerificarAdmin')->add(\MiddlewareJWT::class . ':ValidarTokenMiembros');
 
 $app->group("/empleados", function (RouteCollectorProxy $group) {
     $group->get('[/]', \EmpleadoController::class . ':TraerTodos');
@@ -94,7 +96,7 @@ $app->group("/empleados", function (RouteCollectorProxy $group) {
     $group->post('[/]', \EmpleadoController::class . ':CargarUno');
     $group->put('/{id}', \EmpleadoController::class . ':ModificarUno');
     $group->delete('/{id}', \EmpleadoController::class . ':BorrarUno');
-})->add(\ValidadorParams::class . ':ValidarParamsEmpleados')->add(\Logger::class . ':VerificarAdmin')->add(\MiddlewareJWT::class . ':ValidarToken');
+})->add(\ValidadorParams::class . ':ValidarParamsEmpleados')->add(\Logger::class . ':VerificarAdmin')->add(\MiddlewareJWT::class . ':ValidarTokenMiembros');
 
 $app->group("/mesas", function (RouteCollectorProxy $group) {
   $group->get('[/]', \MesaController::class . ':TraerTodos');
@@ -102,7 +104,7 @@ $app->group("/mesas", function (RouteCollectorProxy $group) {
   $group->post('[/]', \MesaController::class . ':CargarUno');
   $group->put('/{id}', \MesaController::class . ':CambiarEstado');
   $group->delete('/{id}', \MesaController::class . ':BorrarUno');
-})->add(\ValidadorParams::class . ':ValidarParamsMesas')->add(\Logger::class . ':VerificarAdminOMozo')->add(\MiddleWareJWT::class . ':validarToken');
+})->add(\ValidadorParams::class . ':ValidarParamsMesas')->add(\Logger::class . ':VerificarAdminOMozo')->add(\MiddleWareJWT::class . ':ValidarTokenMiembros');
 
 $app->group("/productos", function (RouteCollectorProxy $group){
   $group->get('[/]', \ProductoController::class . ':TraerTodos')->add(\FiltrosListas::class . ':FiltrarVistaProductos');
@@ -111,7 +113,7 @@ $app->group("/productos", function (RouteCollectorProxy $group){
   $group->put('/{id}', \ProductoController::class . ':ModificarUno')->add(\Logger::class . ':VerificarAdmin');
   $group->delete('/{id}', \ProductoController::class . ':BorrarUno')->add(\Logger::class . ':VerificarAdmin');
 
-})->add(\MiddleWareJWT::class . ':validarToken');
+})->add(\MiddleWareJWT::class . ':ValidarTokenMiembros');
 
 $app->group("/pedidos", function (RouteCollectorProxy $group){
   $group->get('[/]', \PedidoController::class . ':TraerTodos')->add(\FiltrosListas::class . ':FiltrarVistaPedidos');;
@@ -120,7 +122,7 @@ $app->group("/pedidos", function (RouteCollectorProxy $group){
   $group->post('/{id}', \PedidoController::class . ':CambiarEstado')->add(\Logger::class . ":VerificarMozo");
   $group->put('/{id}', \PedidoController::class . ':ModificarUno')->add(\Logger::class . ":VerificarMozo");
   $group->delete('/{id}', \PedidoController::class . ':BorrarUno');
-})->add(\Logger::class . ":VerificarAdminOMozo")->add(\MiddlewareJWT::class . ':validarToken');
+})->add(\Logger::class . ":VerificarAdminOMozo")->add(\MiddlewareJWT::class . ':ValidarTokenMiembros');
 
 $app->group("/ordenes", function (RouteCollectorProxy $group){
   $group->get('[/]', \OrdenController::class . ':TraerTodos')->add(\FiltrosListas::class . ':FiltrarVistaOrdenes');
@@ -129,11 +131,20 @@ $app->group("/ordenes", function (RouteCollectorProxy $group){
   $group->post('/{id}', \OrdenController::class . ':CambiarEstado')->add(\Logger::class . ':VerificarEmpleadoEspecifico');
   $group->put('/{id}', \OrdenController::class . ':ModificarUno');
   $group->delete('/{id}', \OrdenController::class . ':BorrarUno');
-})->add(\MiddleWareJWT::class . ':validarToken');
+})->add(\MiddleWareJWT::class . ':ValidarTokenMiembros');
+
+$app->group("/encuestas", function (RouteCollectorProxy $group){
+  $group->get('[/]', \EncuestaController::class . ':TraerTodos')->add(\MiddlewareJWT::class . ':ValidarTokenMiembros');//filtrarlas para los demas empleados
+  $group->post('[/]', \EncuestaController::class . ':CargarUno')->add(\MiddleWareJWT::class . ':ValidarTokenClientes');
+  $group->delete('/{id}', \EncuestaController::class . ':BorrarUno')->add(\Logger::class . ':VerificarAdmin')->add(\MiddlewareJWT::class . ':ValidarTokenMiembros');;
+});
 
 $app->group('/login', function (RouteCollectorProxy $group) {
   $group->post('[/]', \LoginController::class . ':verificarUsuario');
+  $group->post('/clientes', \LoginController::class . ':verificarCliente');
 });
+
+
 
 
 

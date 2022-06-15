@@ -2,9 +2,9 @@
 
 use Firebase\JWT\JWT;
 
-class AutentificadorJWT
+class AutentificadorJWT_Clientes
 {
-    private static $claveSecreta = 'zzehj%$';
+    private static $claveSecreta = 'at%$as';
     private static $tipoEncriptacion = ['HS256'];
 
     public static function CrearToken($puesto, $id)
@@ -13,8 +13,8 @@ class AutentificadorJWT
         $payload = array(
             'iat' => $ahora,
             'aud' => self::Aud(),
-            'puesto' => $puesto,
-            'id' => $id,
+            'mesa_id' => $puesto,
+            'pedido_id' => $id,
             'app' => "Test JWT"
         );
         return JWT::encode($payload, self::$claveSecreta);
@@ -52,22 +52,22 @@ class AutentificadorJWT
         );
     }
 
-    public static function ObtenerPuesto($token)
+    public static function ObtenerIdMesa($token)
     {
         return JWT::decode(
             $token,
             self::$claveSecreta,
             self::$tipoEncriptacion
-        )->puesto;
+        )->mesa_id;
     }
 
-    public static function ObtenerId($token)
+    public static function ObtenerIdPedido($token)
     {
         return JWT::decode(
             $token,
             self::$claveSecreta,
             self::$tipoEncriptacion
-        )->id;
+        )->pedido_id;
     }
 
     private static function Aud()
