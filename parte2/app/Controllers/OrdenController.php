@@ -11,7 +11,7 @@ BASE DE DATOS
 use \App\Models\orden as orden;
 use \App\Models\producto as producto;
 use \App\Models\pedido as pedido;
-
+use GuzzleHttp\Psr7\Stream;
 
 class OrdenController {
 
@@ -238,6 +238,82 @@ class OrdenController {
 
         return $response->withHeader("Content-Type", "application/json");
 
+    }
+
+    public function CrearCsv($request, $response, $args){
+
+        
+        $data = orden::all();
+        if (!file_exists('backup/')) {
+            mkdir('backup/', 0777, true);
+        }
+        $csv = fopen('./backup/ordenes.csv', 'w');
+
+        
+        foreach ($data as $row) {
+	        fputcsv($csv, $row->toArray(), ';');
+        }
+
+        fclose($csv);
+      
+
+        $file = 'ordenes.csv';
+        $fh = fopen('./backup/' . $file, 'rb');
+
+        $stream = new Stream($fh); // create a stream instance for the response body
+
+        return $response->withHeader('Content-Type', 'application/force-download')
+                        ->withHeader('Content-Type', 'application/octet-stream')
+                        ->withHeader('Content-Type', 'application/download')
+                        ->withHeader('Content-Description', 'File Transfer')
+                        ->withHeader('Content-Transfer-Encoding', 'binary')
+                        ->withHeader('Content-Disposition', 'attachment; filename="' . basename($file) . '"')
+                        ->withHeader('Expires', '0')
+                        ->withHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0')
+                        ->withHeader('Pragma', 'public')
+                        ->withBody($stream); // all stream contents will be sent to the response
+        
+
+        
+        
+    }
+
+
+    public function ImportarCsv($request, $response, $args){
+        $tmpName = $_FILES['csv']['tmp_name'];
+        $csvAsArray = array_map('str_getcsv', file($tmpName));
+        var_dump($csvAsArray);
+        
+        foreach ($csvAsArray as $eObj){
+            $pedido = new orden();
+            $array = explode(';', $eObj[0]);
+            if (!orden::existeOrden_PorId($array[0])){
+                orden::where("id", $array[0])->forceDelete();//esto es por si hay un id con softdelete, la prioridad la tiene el csv
+                $pedido->id = $array[0];
+                $pedido->pedido_id = $array[1];
+                $pedido->producto_id = $array[2];
+                $pedido->empleado_id = $array[3];
+                $pedido->descripcion = $array[4];
+                $pedido->cantidad = $array[5];
+                $pedido->subtotal = $array[6];
+                $pedido->tiempo_inicio = $array[7];
+                $pedido->tiempo_estimado = $array[8];
+                $pedido->estado = $array[9];
+                $pedido->created_at = $array[10];
+                $pedido->updated_at = $array[11];
+
+                $pedido->save();
+            }
+            
+
+        }
+        
+
+        $payload = json_encode(array("mensaje" => "Csv importado con exito"));
+
+        $response->getBody()->write($payload);
+
+        return $response->withHeader("Content-Type", "application/json");
     }
 
     /*

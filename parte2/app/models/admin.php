@@ -16,7 +16,9 @@ use \Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class admin extends Model{
-  
+    
+    public $incrementing = true;
+
     protected $fillable = [
         'nombre',
         'clave'

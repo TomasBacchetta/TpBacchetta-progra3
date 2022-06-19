@@ -23,6 +23,8 @@ use \Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class mesa extends Model{
+
+    public $incrementing = true;
     
     protected $fillable = [
         'estado'

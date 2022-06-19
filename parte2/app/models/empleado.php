@@ -18,7 +18,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class empleado extends Model{
 
-
+    public $incrementing = true;
+    
     protected $fillable = [
         'nombre',
         'dni',

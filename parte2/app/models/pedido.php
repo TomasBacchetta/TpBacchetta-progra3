@@ -26,7 +26,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class pedido extends Model{
    
-   
+    public $incrementing = true;
+
     protected $fillable = [
         'mesa_id',
         'mozo_id',
@@ -54,6 +55,16 @@ class pedido extends Model{
         }
 
         return $arrayPedidos;
+    }
+
+    public static function existePedido_PorId($id){
+        $pedido = pedido::where("id", "=", $id)->first();
+        if (isset($pedido)){
+            return true;
+        } else {
+            return false;
+        }
+        
     }
     /*
 

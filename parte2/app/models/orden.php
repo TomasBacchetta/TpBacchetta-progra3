@@ -25,6 +25,8 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 
 class orden extends Model{
     
+    public $incrementing = true;
+
     protected $fillable = [
         'pedido_id',
         'producto_id',
@@ -82,6 +84,16 @@ class orden extends Model{
         } else {
             return false;
         }
+    }
+
+    public static function existeOrden_PorId($id){
+        $orden = orden::where("id", "=", $id)->first();
+        if (isset($orden)){
+            return true;
+        } else {
+            return false;
+        }
+        
     }
 
     public static function SiOrdenEsDelSectorDelEmpleado($id, $empleado_id){

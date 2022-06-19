@@ -3,7 +3,7 @@
 use \App\Models\empleado as empleado;
 use \App\Models\admin as admin;
 //use \App\Middleware\AutentificadorJWT as AutentificadorJWT;
-
+use GuzzleHttp\Psr7\Stream;
 
 class LoginController {
     public function VerificarUsuario($request, $response, $args){

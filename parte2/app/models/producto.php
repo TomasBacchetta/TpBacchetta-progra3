@@ -25,7 +25,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class producto extends Model{
     
-    
+    public $incrementing = true;
+
     protected $fillable = [
         'descripcion', 
         'precio', 
@@ -55,6 +56,18 @@ class producto extends Model{
         }
         
     }
+
+    public static function existeProducto_PorId($id){
+        $producto = producto::where("id", "=", $id)->first();
+        if (isset($producto)){
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
+
+    
     
     
 }

@@ -21,15 +21,16 @@ use Slim\Routing\RouteCollectorProxy;
 use Slim\Routing\RouteContext;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Support\Facades\Redis;
+use Slim\Http\Stream as Stream;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-require_once './Middleware/AutentificadorJWT.php';
-require_once './Middleware/AutentificadorJWT_Clientes.php';
-require_once './Middleware/MiddlewareJWT.php';
-require_once './Middleware/Logger.php';
-require_once './Middleware/ValidadorParams.php';
-require_once './Middleware/FiltrosListas.php';
+require_once './MiddleWare/AutentificadorJWT.php';
+require_once './MiddleWare/AutentificadorJWT_Clientes.php';
+require_once './MiddleWare/MiddlewareJWT.php';
+require_once './MiddleWare/Logger.php';
+require_once './MiddleWare/ValidadorParams.php';
+require_once './MiddleWare/FiltrosListas.php';
 
 
 require_once "./Controllers/LoginController.php";
@@ -145,6 +146,22 @@ $app->group('/login', function (RouteCollectorProxy $group) {
 });
 
 
+//CSV
+
+$app->group('/csv', function (RouteCollectorProxy $group) {
+  $group->get('/productos', \ProductoController::class . ':CrearCsv');//http://localhost:777/csv/productos en navegador para descargar csv
+  $group->post('/productos', \ProductoController::class . ':ImportarCsv');
+  $group->get('/pedidos', \PedidoController::class . ':CrearCsv');//http://localhost:777/csv/pedidos en navegador para descargar csv
+  $group->post('/pedidos', \PedidoController::class . ':ImportarCsv');
+  $group->get('/ordenes', \OrdenController::class . ':CrearCsv');//http://localhost:777/csv/pedidos en navegador para descargar csv
+  $group->post('/ordenes', \OrdenController::class . ':ImportarCsv');
+})->add(function ($request, $handler) {
+  $response = $handler->handle($request);
+  return $response
+          ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+          ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+});
+
 
 
 
@@ -207,8 +224,7 @@ $app->group('/jwt', function (RouteCollectorProxy $group) {
 
 
 
-
-$app->get('[/]', function (Request $request, Response $response) {
+$app->post('[/]', function (Request $request, Response $response) {
     $response->getBody()->write("TP BACCHETTA");
     return $response;
 });

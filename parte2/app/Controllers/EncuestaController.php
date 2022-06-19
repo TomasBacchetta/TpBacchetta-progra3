@@ -9,7 +9,7 @@ BASE DE DATOS
 
 */
 use \App\Models\encuesta as encuesta;
-
+use GuzzleHttp\Psr7\Stream;
 
 
 class encuestaController {

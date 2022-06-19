@@ -9,7 +9,7 @@ BASE DE DATOS
 
 */
 use \App\Models\admin as admin;
-
+use GuzzleHttp\Psr7\Stream;
 
 
 class AdminController {

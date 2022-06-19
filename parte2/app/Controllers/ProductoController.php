@@ -12,6 +12,8 @@ BASE DE DATOS
 
 
 use \App\Models\producto as producto;
+use GuzzleHttp\Psr7\Stream;
+use Slim\Psr7\Stream as Psr7Stream;
 
 class ProductoController {
 
@@ -117,6 +119,78 @@ class ProductoController {
 
     }
 
+    public function CrearCsv($request, $response, $args){
+
+        
+        $data = producto::all();
+        if (!file_exists('backup/')) {
+            mkdir('backup/', 0777, true);
+        }
+        $csv = fopen('./backup/productos.csv', 'w');
+
+        
+        foreach ($data as $row) {
+	        fputcsv($csv, $row->toArray(), ';');
+        }
+
+        fclose($csv);
+      
+
+        $file = 'productos.csv';
+        $fh = fopen('./backup/' . $file, 'rb');
+
+        $stream = new Stream($fh);
+
+        return $response->withHeader('Content-Type', 'application/force-download')
+                        ->withHeader('Content-Type', 'application/octet-stream')
+                        ->withHeader('Content-Type', 'application/download')
+                        ->withHeader('Content-Description', 'File Transfer')
+                        ->withHeader('Content-Transfer-Encoding', 'binary')
+                        ->withHeader('Content-Disposition', 'attachment; filename="' . basename($file) . '"')
+                        ->withHeader('Expires', '0')
+                        ->withHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0')
+                        ->withHeader('Pragma', 'public')
+                        ->withBody($stream); // todo el contenido del stream se enviara en el body de la respuesta
+        
+
+        
+        
+    }
+
+
+
+    public function ImportarCsv($request, $response, $args){
+        $tmpName = $_FILES['csv']['tmp_name'];
+        $csvAsArray = array_map('str_getcsv', file($tmpName));
+        var_dump($csvAsArray);
+        
+        foreach ($csvAsArray as $eObj){
+            $producto = new producto();
+            $array = explode(';', $eObj[0]);
+            if (!producto::existeProducto_PorId($array[0])){
+                producto::where("id", $array[0])->forceDelete();//esto es por si hay un id con softdelete
+                $producto->id = $array[0];
+                $producto->descripcion = $array[1];
+                $producto->precio = $array[2];
+                $producto->stock = $array[3];
+                $producto->sector = $array[4];
+                $producto->tiempo_estimado = $array[5];
+                $producto->created_at = $array[6];
+                $producto->updated_at = $array[7];
+
+                $producto->save();
+            }
+            
+
+        }
+        
+
+        $payload = json_encode(array("mensaje" => "Csv importado con exito"));
+
+        $response->getBody()->write($payload);
+
+        return $response->withHeader("Content-Type", "application/json");
+    }
     
 
     

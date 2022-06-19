@@ -9,7 +9,7 @@ BASE DE DATOS
 
 */
 use \App\Models\empleado as empleado;
-
+use GuzzleHttp\Psr7\Stream;
 
 
 class EmpleadoController {
