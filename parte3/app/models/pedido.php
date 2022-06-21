@@ -66,6 +66,43 @@ class pedido extends Model{
         }
         
     }
+
+    public static function PedidoTieneCocinero($pedido_id){
+        $ordenes = orden::ObtenerOrdenesPorSector("Cocina");
+        foreach ($ordenes as $eOrden){
+            if ($eOrden->pedido_id == $pedido_id){
+                return true;
+            }
+        }
+        $ordenes = orden::ObtenerOrdenesPorSector("Candy_Bar");
+        foreach ($ordenes as $eOrden){
+            if ($eOrden->pedido_id == $pedido_id){
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    public static function PedidoTieneCervecero($pedido_id){
+        $ordenes = orden::ObtenerOrdenesPorSector("Barra_Choperas");
+        foreach ($ordenes as $eOrden){
+            if ($eOrden->pedido_id == $pedido_id){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static function PedidoTieneBartender($pedido_id){
+        $ordenes = orden::ObtenerOrdenesPorSector("Barra_Tragos");
+        foreach ($ordenes as $eOrden){
+            if ($eOrden->pedido_id == $pedido_id){
+                return true;
+            }
+        }
+        return false;
+    }
     /*
 
     public static function ObtenerPedidosAbiertosPorSector($sector){

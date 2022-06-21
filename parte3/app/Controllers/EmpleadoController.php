@@ -27,6 +27,7 @@ class EmpleadoController {
         $empleadoNuevo->nombre = $nombre;
         $empleadoNuevo->clave = $clave;
         $empleadoNuevo->puesto = $puesto;
+        $empleadoNuevo->estado = "Activo";
         
         $empleadoNuevo->save();
 
@@ -76,13 +77,30 @@ class EmpleadoController {
 
         $empleadoModificado->update();
 
-        $payload = json_encode(array("mensaje" => "Usuario modificado exitosamente"));
+        $payload = json_encode(array("mensaje" => "Empleado modificado exitosamente"));
 
         $response->getBody()->write($payload);
 
         return $response->withHeader("Content-Type", "application/json");
 
         
+    }
+
+    public function CambiarEstado($request, $response, $args){
+        $id = $args["id"];
+        $param = $request->getParsedBody();
+
+        
+        $empleado = empleado::where("id", $id)->first();
+        $empleado->estado = $param["estado"];
+        $empleado->save();
+
+        $payload = json_encode(array("mensaje"=> "Empleado cambiado de estado a: " . $param["estado"]));
+
+        $response->getBody()->write($payload);
+
+        return $response->withHeader("Content-Type", "application/json");
+
     }
 
     public function BorrarUno($request, $response, $args){
@@ -94,7 +112,7 @@ class EmpleadoController {
         
         $empleadoABorrar->delete();
 
-        $payload = json_encode(array("mensaje"=> "Usuario eliminado exitosamente"));
+        $payload = json_encode(array("mensaje"=> "Empleado eliminado exitosamente"));
 
         $response->getBody()->write($payload);
 
@@ -126,9 +144,7 @@ class EmpleadoController {
                         ->withHeader('Pragma', 'public')
                         ->withBody($stream); // all stream contents will be sent to the response
         
-
-        
-        
+       
     }
 
 

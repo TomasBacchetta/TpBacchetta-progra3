@@ -82,72 +82,72 @@ class ValidadorParams {
         
         $response = new Response();
 
-        if ($method == "POST" || $method == "PUT"){
-            $dato = $request->getParsedBody();
-            $error = false;
-            $mensaje = "";
+        
+        $dato = $request->getParsedBody();
+        $error = false;
+        $mensaje = "";
+        
+        
+        if (!isset($dato)){
+            $payload = json_encode(array("Mensaje" => "Faltan todos los parametros"));
+            $response->getBody()->write($payload);
+            return $response->withStatus(403);
             
-            
-            if (!isset($dato)){
-                $payload = json_encode(array("Mensaje" => "Faltan todos los parametros"));
-                $response->getBody()->write($payload);
-                return $response->withStatus(403);
-                
-            } else {
-                if (!array_key_exists("nombre", $dato)){
-                    $mensaje .= "Falta el parametro de nombre. ";
-                    $error = true;   
-                } else {//si existe el parametro
-                    if ($method == "POST"){
-                        if (empleado::existeEmpleado($dato["nombre"])){
-                            $mensaje .= "Ya existe ese empleado. ";
-                            $error = true;
-                        }
-                    }
-                    if ($dato["nombre"] == ""){
-                        $mensaje .= "Nombre invalido. ";
+        } else {
+            if (!array_key_exists("nombre", $dato)){
+                $mensaje .= "Falta el parametro de nombre. ";
+                $error = true;   
+            } else {//si existe el parametro
+                if ($method == "POST"){
+                    if (empleado::existeEmpleado($dato["nombre"])){
+                        $mensaje .= "Ya existe ese empleado. ";
                         $error = true;
                     }
                 }
-                if (!array_key_exists("clave", $dato)){
-                    $mensaje .= "Falta el parametro de clave";
-                    $error = true;  
-                } else {//si existe el parametro
-                    if ($dato["clave"] == "" || is_nan($dato["clave"])){
-                        $mensaje .= "Clave invalida. ";
-                        $error = true;
-                    } 
+                if ($dato["nombre"] == ""){
+                    $mensaje .= "Nombre invalido. ";
+                    $error = true;
                 }
-                if (!array_key_exists("puesto", $dato)){
-                    $mensaje .= "Falta el parametro de puesto";
-                    $error = true;  
-                } else {//si existe el parametro
-                    if ($dato["puesto"] == "" || (
-                        $dato["puesto"] != "Mozo" &&
-                        $dato["puesto"] != "Cocinero" &&
-                        $dato["puesto"] != "Bartender" &&
-                        $dato["puesto"] != "Cervecero"
-
-                    )){
-                        $mensaje .= "Puesto invalido. ";
-                        $error = true;
-                    } 
-                }
-                
-               
-                
-                if ($error){
-                    
-                    $payload = json_encode(array("Mensaje" => $mensaje));
-                    $response->getBody()->write($payload);
-                    return $response->withStatus(403); 
-                }
-                
-                    
             }
+            if (!array_key_exists("clave", $dato)){
+                $mensaje .= "Falta el parametro de clave";
+                $error = true;  
+            } else {//si existe el parametro
+                if ($dato["clave"] == "" || is_nan($dato["clave"])){
+                    $mensaje .= "Clave invalida. ";
+                    $error = true;
+                } 
+            }
+            if (!array_key_exists("puesto", $dato)){
+                $mensaje .= "Falta el parametro de puesto";
+                $error = true;  
+            } else {//si existe el parametro
+                if ($dato["puesto"] == "" || (
+                    $dato["puesto"] != "Mozo" &&
+                    $dato["puesto"] != "Cocinero" &&
+                    $dato["puesto"] != "Bartender" &&
+                    $dato["puesto"] != "Cervecero"
+
+                )){
+                    $mensaje .= "Puesto invalido. ";
+                    $error = true;
+                } 
+            }
+            
+            
+            
+            if ($error){
+                
+                $payload = json_encode(array("Mensaje" => $mensaje));
+                $response->getBody()->write($payload);
+                return $response->withStatus(403); 
+            }
+            
+                
+        }
 
             
-        }
+        
         
 
         $response = $handler->handle($request);
@@ -406,7 +406,54 @@ class ValidadorParams {
     }
 
 
-    
+    public function ValidarParamsEncuestas($request, $handler){
+        $dato = $request->getParsedBody();
+        $header = $request->getHeaderLine('Authorization');
+        $token = trim(explode("Bearer", $header)[1]);
+        $mesa_id = AutentificadorJWT_Clientes::ObtenerIdMesa($token);
+        $pedido_id = AutentificadorJWT_Clientes::ObtenerIdPedido($token);
+        $response = new Response();
+
+        if (mesa::where("id", $mesa_id)->first()->estado != "Con cliente pagando"){
+            $payload = json_encode(array("Mensaje" => "Aun no puede realizarse la encuesta"));
+            $response->getBody()->write($payload);
+            return $response->withStatus(403);
+        }
+
+        if (!isset($dato)){
+            $payload = json_encode(array("Mensaje" => "Faltan todos los parametros"));
+            $response->getBody()->write($payload);
+            return $response->withStatus(403);
+        }
+        
+        if (!array_key_exists("calificacion_mesa", $dato) ||
+            !array_key_exists("calificacion_restaurante", $dato) ||
+            !array_key_exists("calificacion_mozo", $dato) ||
+            !array_key_exists("calificacion_cocinero", $dato) ||
+            !array_key_exists("calificacion_cervecero", $dato) ||
+            !array_key_exists("calificacion_bartender", $dato)){
+            $payload = json_encode(array("Mensaje" => "Falta algun parametro"));
+            $response->getBody()->write($payload);
+            return $response->withStatus(403);
+        }
+
+        if (($dato["calificacion_mesa"] < 1 || $dato["calificacion_mesa"] > 10) ||
+            ($dato["calificacion_restaurante"] < 1 || $dato["calificacion_restaurante"] > 10) ||
+            ($dato["calificacion_mozo"] < 1 || $dato["calificacion_mozo"] > 10) ||
+            (($dato["calificacion_cocinero"] < 1 || $dato["calificacion_cocinero"] > 10) && pedido::PedidoTieneCocinero($pedido_id)) ||
+            (($dato["calificacion_cocinero"] < 1 || $dato["calificacion_cocinero"] > 10) && pedido::PedidoTieneCocinero($pedido_id)) ||
+            (($dato["calificacion_cocinero"] < 1 || $dato["calificacion_cocinero"] > 10) && pedido::PedidoTieneCocinero($pedido_id))){
+
+        }
+
+        
+
+
+
+
+        $response = $handler->handle($request);
+        return $response;
+    }
    
     
 }

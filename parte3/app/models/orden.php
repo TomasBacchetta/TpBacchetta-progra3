@@ -116,6 +116,8 @@ class orden extends Model{
         
     }
 
+    
+
     public static function SiOrdenEsDelSectorDelEmpleado($id, $empleado_id){
         $orden = orden::where("id", $id)->first();
         $sectorProducto = producto::where("id", $orden->producto_id)->value("sector");

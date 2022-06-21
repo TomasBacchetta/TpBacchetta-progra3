@@ -253,14 +253,11 @@ class PedidoController {
 
         
 
-        $pdf->Output($id . '.pdf', 'I');//???
+        $pdf->Output($id . '.pdf', 'I');
         
-        return $response->withHeader("Content-Type", "application/pdf");;
+        return $response->withHeader("Content-Type", "application/pdf");
     
     }
-    
-
-    
     
 
     

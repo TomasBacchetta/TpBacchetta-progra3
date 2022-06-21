@@ -93,10 +93,11 @@ $app->group("/admins", function (RouteCollectorProxy $group) {
 $app->group("/empleados", function (RouteCollectorProxy $group) {
     $group->get('[/]', \EmpleadoController::class . ':TraerTodos');
     $group->get('/{id}', \EmpleadoController::class . ':TraerUno');
-    $group->post('[/]', \EmpleadoController::class . ':CargarUno');
+    $group->post('[/]', \EmpleadoController::class . ':CargarUno')->add(\ValidadorParams::class . ':ValidarParamsEmpleados');
+    $group->post('/{id}', \EmpleadoController::class . ':CambiarEstado');
     $group->put('/{id}', \EmpleadoController::class . ':ModificarUno');
     $group->delete('/{id}', \EmpleadoController::class . ':BorrarUno');
-})->add(\ValidadorParams::class . ':ValidarParamsEmpleados')->add(\Logger::class . ':VerificarAdmin')->add(\MiddlewareJWT::class . ':ValidarTokenMiembros');
+})->add(\Logger::class . ':VerificarAdmin')->add(\MiddlewareJWT::class . ':ValidarTokenMiembros');
 
 $app->group("/mesas", function (RouteCollectorProxy $group) {
   $group->get('[/]', \MesaController::class . ':TraerTodos');
@@ -137,6 +138,7 @@ $app->group("/encuestas", function (RouteCollectorProxy $group){
   $group->post('[/]', \EncuestaController::class . ':CargarUno')->add(\MiddleWareJWT::class . ':ValidarTokenClientes');
   $group->delete('/{id}', \EncuestaController::class . ':BorrarUno')->add(\Logger::class . ':VerificarAdmin')->add(\MiddlewareJWT::class . ':ValidarTokenMiembros');
 });
+
 
 $app->group('/login', function (RouteCollectorProxy $group) {
   $group->post('[/]', \LoginController::class . ':verificarUsuario');

@@ -22,9 +22,10 @@ class empleado extends Model{
     
     protected $fillable = [
         'nombre',
-        'dni',
         'clave',
-        'puesto'
+        'puesto',
+        'puntaje',
+        'estado'
     ];
 
     use SoftDeletes;

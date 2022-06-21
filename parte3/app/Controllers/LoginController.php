@@ -14,13 +14,19 @@ class LoginController {
 
 
         if (empleado::verificarEmpleado($nombre, $clave)){
-            $tokenNuevo = AutentificadorJWT::CrearToken(
-                empleado::where("nombre", $nombre)->value("puesto"), 
-                empleado::where("nombre", $nombre)->value("id")
-            );
-            $response->getBody()->write(json_encode(array("token"=>$tokenNuevo)));
-
-            return $response;
+            if (empleado::where("nombre", $nombre)->first()->estado == "Activo"){
+                $tokenNuevo = AutentificadorJWT::CrearToken(
+                    empleado::where("nombre", $nombre)->value("puesto"), 
+                    empleado::where("nombre", $nombre)->value("id")
+                );
+                $response->getBody()->write(json_encode(array("token"=>$tokenNuevo)));
+    
+                return $response;
+            } else {
+                $response->getBody()->write("Empleado inactivo. Consulte al administrador");
+                return $response->withStatus(403);
+            }
+            
         }
         if (admin::verificarAdmin($nombre, $clave)){
             $tokenNuevo = AutentificadorJWT::CrearToken("admin", 999);
