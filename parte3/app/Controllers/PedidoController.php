@@ -125,26 +125,6 @@ class PedidoController {
         
     }
 
-    public function CambiarEstado($request, $response, $args){
-        $param = $request->getParsedBody();
-        
-        $id = $args["id"];
-        
-        $pedidoModificado = pedido::where("id", $id)->first();
-        $pedidoModificado->estado = $param["estado"];
-
-        $pedidoModificado->save();
-
-        
-
-        $payload = json_encode(array("mensaje" => "Estado del pedido cambiado a " . $param["estado"] . " exitosamente"));
-
-        $response->getBody()->write($payload);
-
-        return $response->withHeader("Content-Type", "application/json");
-
-        
-    }
 
     public function BorrarUno($request, $response, $args){
         $param = $request->getParsedBody();
@@ -152,11 +132,12 @@ class PedidoController {
         $id = $args["id"];
         
 
-        $ordenBorrada = orden::where("id", $id)->first();
+        $pedidoBorrado = pedido::where("id", $id)->first();
+        orden::BorrarTodasLasOrdenesDeUnPedido($id);
 
-        $ordenBorrada->delete();
+        $pedidoBorrado->delete();
         
-        $payload = json_encode(array("mensaje"=> "Orden con id: " . $id . "eliminada exitosamente"));
+        $payload = json_encode(array("mensaje"=> "Pedido con id: " . $id . "eliminado exitosamente junto a todas sus ordenes"));
 
         $response->getBody()->write($payload);
 
@@ -165,7 +146,7 @@ class PedidoController {
     }
 
     public function CrearCsv($request, $response, $args){
-        $data = pedido::all();
+        $data = pedido::withTrashed()->get();
         $csv = fopen('php://memory', 'w');
         
         foreach ($data as $row) {
@@ -195,13 +176,11 @@ class PedidoController {
     public function ImportarCsv($request, $response, $args){
         $tmpName = $_FILES['csv']['tmp_name'];
         $csvAsArray = array_map('str_getcsv', file($tmpName));
-        var_dump($csvAsArray);
         
         foreach ($csvAsArray as $eObj){
             $pedido = new pedido();
             $array = explode(';', $eObj[0]);
             if (!pedido::existePedido_PorId($array[0])){
-                pedido::where("id", $array[0])->forceDelete();//esto es por si hay un id con softdelete, la prioridad la tiene el csv
                 $pedido->id = $array[0];
                 $pedido->mesa_id = $array[1];
                 $pedido->mozo_id = $array[2];
@@ -212,8 +191,20 @@ class PedidoController {
                 $pedido->created_at = $array[7];
                 $pedido->updated_at = $array[8];
 
-                $pedido->save();
+                
+            } else {
+                
+                $pedido = pedido::where("id", $array[0])->withTrashed()->first();
+                if ((!isset($pedido->deleted_at) || $pedido->deleted_at != '') &&
+                    ($array[9] == null || $array[9] == '')){
+                    $pedido->deleted_at = null;
+                    orden::RestaurarTodasLasOrdenesDeUnPedido($array[0]);
+                }
+
+                
             }
+
+                $pedido->save();
             
 
         }

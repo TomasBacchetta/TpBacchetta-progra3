@@ -58,6 +58,16 @@ class empleado extends Model{
         }
         
     }
+
+    public static function existeEmpleado_PorId($id){
+        $empleado = empleado::where("id", "=", $id)->withTrashed()->first();
+        if (isset($empleado)){
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
     
 }
 

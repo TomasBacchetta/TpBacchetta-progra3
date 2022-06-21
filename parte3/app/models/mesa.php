@@ -44,7 +44,7 @@ class mesa extends Model{
     }
 
     public static function existeMesa_PorId($id){
-        $mesa = mesa::where("id", "=", $id)->first();
+        $mesa = mesa::where("id", "=", $id)->withTrashed()->first();
         if (isset($mesa)){
             return true;
         } else {

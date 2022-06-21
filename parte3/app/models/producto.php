@@ -58,7 +58,7 @@ class producto extends Model{
     }
 
     public static function existeProducto_PorId($id){
-        $producto = producto::where("id", "=", $id)->first();
+        $producto = producto::where("id", "=", $id)->withTrashed()->first();
         if (isset($producto)){
             return true;
         } else {

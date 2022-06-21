@@ -120,7 +120,7 @@ class ProductoController {
     }
 
     public function CrearCsv($request, $response, $args){
-        $data = producto::all();
+        $data = producto::withTrashed()->get();
         $csv = fopen('php://memory', 'w');
         
         foreach ($data as $row) {
@@ -165,8 +165,19 @@ class ProductoController {
                 $producto->created_at = $array[6];
                 $producto->updated_at = $array[7];
 
-                $producto->save();
+                
+            } else {
+                
+                $producto = producto::where("id", $array[0])->withTrashed()->first();
+                if ((!isset($producto->deleted_at) || $producto->deleted_at != '') &&
+                    ($array[8] == null || $array[8] == '')){
+                    $producto->deleted_at = null;
+                }
+
+                
             }
+
+                $producto->save();
             
 
         }

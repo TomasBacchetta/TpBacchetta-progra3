@@ -162,10 +162,18 @@ class OrdenController {
             //ademas, la orden pasa a estar vinculada al empleado
 
             $ordenModificada->empleado_id = AutentificadorJWT::ObtenerId($token);
+
+            ///esto porque poner el tiempo estimado de la orden manualmente es opcional
+            if (array_key_exists("tiempo_estimado", $param) && $param["tiempo_estimado"] != null && $param["tiempo_estimado"] != ""){
+                $ordenModificada->tiempo_estimado = $param["tiempo_estimado"];
+                $pedido = pedido::where("id", $pedido_id)->first();
+                $pedido->tiempo_estimado = orden::where("pedido_id", $ordenModificada->pedido_id)->max("tiempo_estimado");
+            }
             $ordenModificada->save();
             $ordenes = orden::ObtenerOrdenesAbiertasPorPedido($pedido_id);
-            if (!$ordenes){//si todas las ordenes vinculadas al pedido ya se encuentran  en preparacion preparadas
+            if (!$ordenes){//si todas las ordenes vinculadas al pedido ya se encuentran en preparacion 
                 $pedido = pedido::where("id", $pedido_id)->first();
+                $pedido->tiempo_estimado = orden::where("pedido_id", $ordenModificada->pedido_id)->max("tiempo_estimado");
                 $pedido->estado = "En preparacion";
                 $pedido->save();
             }
@@ -243,7 +251,7 @@ class OrdenController {
     public function CrearCsv($request, $response, $args){
 
         
-        $data = orden::all();
+        $data = orden::withTrashed()->get();
         $csv = fopen('php://memory', 'w');
         
         foreach ($data as $row) {

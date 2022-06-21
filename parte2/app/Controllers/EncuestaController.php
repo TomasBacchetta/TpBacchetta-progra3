@@ -126,7 +126,7 @@ class encuestaController {
     public function CrearCsv($request, $response, $args){
 
         
-        $data = encuesta::all();
+        $data = encuesta::withTrashed()->get();
         $csv = fopen('php://memory', 'w');
         
         foreach ($data as $row) {
@@ -159,25 +159,36 @@ class encuestaController {
         var_dump($csvAsArray);
         
         foreach ($csvAsArray as $eObj){
-            $mesa = new encuesta();
+            $encuesta = new encuesta();
             $array = explode(';', $eObj[0]);
             if (!encuesta::existeEncuesta_PorId($array[0])){
                 encuesta::where("id", $array[0])->forceDelete();//esto es por si hay un id con softdelete, la prioridad la tiene el csv
-                $mesa->id = $array[0];
-                $mesa->pedido_id = $array[1];
-                $mesa->calificacion_mesa = $array[2];
-                $mesa->calificacion_restaurante = $array[3];
-                $mesa->calificacion_mozo = $array[4];
-                $mesa->calificacion_cocinero = $array[5];
-                $mesa->calificacion_cervecero = $array[6];
-                $mesa->calificacion_bartender = $array[7];
-                $mesa->comentario = $array[8];
-                $mesa->created_at = $array[9];
-                $mesa->updated_at = $array[10];
+                $encuesta->id = $array[0];
+                $encuesta->pedido_id = $array[1];
+                $encuesta->calificacion_mesa = $array[2];
+                $encuesta->calificacion_restaurante = $array[3];
+                $encuesta->calificacion_mozo = $array[4];
+                $encuesta->calificacion_cocinero = $array[5];
+                $encuesta->calificacion_cervecero = $array[6];
+                $encuesta->calificacion_bartender = $array[7];
+                $encuesta->comentario = $array[8];
+                $encuesta->created_at = $array[9];
+                $encuesta->updated_at = $array[10];
                 
 
-                $mesa->save();
+                
+            } else {
+                
+                $encuesta = encuesta::where("id", $array[0])->withTrashed()->first();
+                if ((!isset($encuesta->deleted_at) || $encuesta->deleted_at != '') &&
+                    ($array[11] == null || $array[11] == '')){
+                    $encuesta->deleted_at = null;
+                }
+
+                
             }
+
+                $encuesta->save();
             
 
         }

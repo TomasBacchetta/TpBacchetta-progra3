@@ -103,7 +103,7 @@ class AdminController {
     public function CrearCsv($request, $response, $args){
 
         
-        $data = admin::all();
+        $data = admin::withTrashed()->get();
         $csv = fopen('php://memory', 'w');
         
         foreach ($data as $row) {
@@ -145,8 +145,19 @@ class AdminController {
                 $admin->created_at = $array[3];
                 $admin->updated_at = $array[4];
 
-                $admin->save();
+                
+            } else {
+                
+                $admin = admin::where("id", $array[0])->withTrashed()->first();
+                if ((!isset($admin->deleted_at) || $admin->deleted_at != '') &&
+                    ($array[5] == null || $array[5] == '')){
+                    $admin->deleted_at = null;
+                }
+
+                
             }
+
+            $admin->save();
             
 
         }

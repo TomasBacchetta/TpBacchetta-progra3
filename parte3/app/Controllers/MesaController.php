@@ -104,7 +104,7 @@ class MesaController {
     public function CrearCsv($request, $response, $args){
 
         
-        $data = mesa::all();
+        $data = mesa::withTrashed()->get();
         $csv = fopen('php://memory', 'w');
         
         foreach ($data as $row) {
@@ -134,23 +134,31 @@ class MesaController {
     public function ImportarCsv($request, $response, $args){
         $tmpName = $_FILES['csv']['tmp_name'];
         $csvAsArray = array_map('str_getcsv', file($tmpName));
-        var_dump($csvAsArray);
         
         foreach ($csvAsArray as $eObj){
             $mesa = new mesa();
             $array = explode(';', $eObj[0]);
             if (!mesa::existeMesa_PorId($array[0])){
-                mesa::where("id", $array[0])->forceDelete();//esto es por si hay un id con softdelete, la prioridad la tiene el csv
                 $mesa->id = $array[0];
                 $mesa->estado = $array[1];
                 $mesa->created_at = $array[2];
                 $mesa->updated_at = $array[3];
                 
 
-                $mesa->save();
+                
+            } else {
+                
+                $mesa = mesa::where("id", $array[0])->withTrashed()->first();
+                if ((!isset($mesa->deleted_at) || $mesa->deleted_at != '') &&
+                    ($array[4] == null || $array[4] == '')){
+                    $mesa->deleted_at = null;
+                    
+                }
+
+                
             }
             
-
+            $mesa->save();
         }
         
 

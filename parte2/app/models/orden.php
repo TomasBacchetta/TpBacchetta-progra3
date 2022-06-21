@@ -48,6 +48,27 @@ class orden extends Model{
         return $this->hasOne(pedido::class);
     }
     */
+
+    public static function BorrarTodasLasOrdenesDeUnPedido($pedido_id){
+        $ordenes = orden::where("pedido_id", $pedido_id)->get();
+        if (isset($ordenes)){
+            foreach ($ordenes as $eOrden){
+                $eOrden->delete();
+            }
+        }
+
+    }
+
+    public static function RestaurarTodasLasOrdenesDeUnPedido($pedido_id){
+        $ordenes = orden::where("pedido_id", $pedido_id)->withTrashed()->get();
+        if (isset($ordenes)){
+            foreach ($ordenes as $eOrden){
+                $eOrden->deleted_at = null;
+                $eOrden->save();
+            }
+        }
+
+    }
     
     public static function ObtenerOrdenesEnPreparacionPorPedido($pedido_id){
         $ordenes = orden::where("pedido_id", $pedido_id)->get();
@@ -86,7 +107,7 @@ class orden extends Model{
     }
 
     public static function existeOrden_PorId($id){
-        $orden = orden::where("id", "=", $id)->first();
+        $orden = orden::where("id", "=", $id)->withTrashed()->first();
         if (isset($orden)){
             return true;
         } else {

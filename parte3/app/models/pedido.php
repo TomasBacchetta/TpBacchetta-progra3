@@ -58,7 +58,7 @@ class pedido extends Model{
     }
 
     public static function existePedido_PorId($id){
-        $pedido = pedido::where("id", "=", $id)->first();
+        $pedido = pedido::where("id", "=", $id)->withTrashed()->first();
         if (isset($pedido)){
             return true;
         } else {

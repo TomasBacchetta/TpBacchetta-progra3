@@ -45,6 +45,16 @@ class admin extends Model{
         }
         
     }
+
+    public static function existeAdmin_PorId($nombre){
+        $admin = admin::where("nombre", "=", $nombre)->withTrashed()->first();
+        if (isset($admin)){
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
     
 }
 

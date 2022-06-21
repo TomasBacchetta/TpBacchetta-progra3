@@ -33,7 +33,7 @@ class encuesta extends Model{
     use SoftDeletes;
 
     public static function existeEncuesta_PorId($id){
-        $encuesta = encuesta::where("id", "=", $id)->first();
+        $encuesta = encuesta::where("id", "=", $id)->withTrashed()->first();
         if (isset($encuesta)){
             return true;
         } else {

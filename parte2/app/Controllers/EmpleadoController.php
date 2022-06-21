@@ -105,7 +105,7 @@ class EmpleadoController {
     public function CrearCsv($request, $response, $args){
 
         
-        $data = empleado::all();
+        $data = empleado::withTrashed()->get();
         $csv = fopen('php://memory', 'w');
         
         foreach ($data as $row) {
@@ -140,8 +140,7 @@ class EmpleadoController {
         foreach ($csvAsArray as $eObj){
             $empleado = new empleado();
             $array = explode(';', $eObj[0]);
-            if (!empleado::existeEncuesta_PorId($array[0])){
-                empleado::where("id", $array[0])->forceDelete();//esto es por si hay un id con softdelete, la prioridad la tiene el csv
+            if (!empleado::existeEmpleado_PorId($array[0])){
                 $empleado->id = $array[0];
                 $empleado->nombre = $array[1];
                 $empleado->clave = $array[2];
@@ -151,10 +150,18 @@ class EmpleadoController {
                 $empleado->updated_at = $array[6];
                 
 
-                $empleado->save();
+            } else {
+                
+                $empleado = empleado::where("id", $array[0])->withTrashed()->first();
+                if ((!isset($empleado->deleted_at) || $empleado->deleted_at != '') &&
+                    ($array[7] == null || $array[7] == '')){
+                    $empleado->deleted_at = null;
+                }
+
+                
             }
             
-
+            $empleado->save();
         }
         
 

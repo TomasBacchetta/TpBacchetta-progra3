@@ -119,7 +119,6 @@ $app->group("/pedidos", function (RouteCollectorProxy $group){
   $group->get('[/]', \PedidoController::class . ':TraerTodos')->add(\FiltrosListas::class . ':FiltrarVistaPedidos');;
   $group->get('/{id}', \PedidoController::class . ':TraerUno');
   $group->post('[/]', \PedidoController::class . ':CargarUno')->add(\ValidadorParams::class . ':ValidarParamsCargaPedidos')->add(\Logger::class . ":VerificarMozo");
-  $group->post('/{id}', \PedidoController::class . ':CambiarEstado')->add(\Logger::class . ":VerificarMozo");
   $group->put('/{id}', \PedidoController::class . ':ModificarUno')->add(\Logger::class . ":VerificarMozo");
   $group->delete('/{id}', \PedidoController::class . ':BorrarUno');
 })->add(\Logger::class . ":VerificarAdminOMozo")->add(\MiddlewareJWT::class . ':ValidarTokenMiembros');
@@ -156,14 +155,14 @@ $app->group('/csv', function (RouteCollectorProxy $group) {
   $group->post('/pedidos', \PedidoController::class . ':ImportarCsv');
   $group->get('/ordenes', \OrdenController::class . ':CrearCsv');//http://localhost:777/csv/ordenes en navegador para descargar csv
   $group->post('/ordenes', \OrdenController::class . ':ImportarCsv');
-  $group->get('/mesas', \OrdenController::class . ':CrearCsv');//http://localhost:777/csv/ordenes en navegador para descargar csv
-  $group->post('/mesas', \OrdenController::class . ':ImportarCsv');
-  $group->get('/encuestas', \OrdenController::class . ':CrearCsv');//http://localhost:777/csv/ordenes en navegador para descargar csv
-  $group->post('/encuestas', \OrdenController::class . ':ImportarCsv');
-  $group->get('/empleados', \OrdenController::class . ':CrearCsv');//http://localhost:777/csv/ordenes en navegador para descargar csv
-  $group->post('/empleados', \OrdenController::class . ':ImportarCsv');
-  $group->get('/admins', \OrdenController::class . ':CrearCsv');//http://localhost:777/csv/ordenes en navegador para descargar csv
-  $group->post('/admins', \OrdenController::class . ':ImportarCsv');
+  $group->get('/mesas', \MesaController::class . ':CrearCsv');//http://localhost:777/csv/mesas en navegador para descargar csv
+  $group->post('/mesas', \MesaController::class . ':ImportarCsv');
+  $group->get('/encuestas', \EncuestaController::class . ':CrearCsv');//http://localhost:777/csv/encuestas en navegador para descargar csv
+  $group->post('/encuestas', \EncuestaController::class . ':ImportarCsv');
+  $group->get('/empleados', \EmpleadoController::class . ':CrearCsv');//http://localhost:777/csv/empleados en navegador para descargar csv
+  $group->post('/empleados', \EmpleadoController::class . ':ImportarCsv');
+  $group->get('/admins', \AdminController::class . ':CrearCsv');//http://localhost:777/csv/admins en navegador para descargar csv
+  $group->post('/admins', \AdminController::class . ':ImportarCsv');
 })->add(function ($request, $handler) {
   $response = $handler->handle($request);
   return $response
