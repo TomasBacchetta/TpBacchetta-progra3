@@ -22,6 +22,7 @@ class MesaController {
         $mesaNueva = new mesa();
 
         $mesaNueva->estado = "Cerrada";
+        $mesaNueva->puntaje = 0;
         
         $mesaNueva->save();
 

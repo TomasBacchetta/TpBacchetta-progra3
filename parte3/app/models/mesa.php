@@ -27,7 +27,8 @@ class mesa extends Model{
     public $incrementing = true;
     
     protected $fillable = [
-        'estado'
+        'estado',
+        'puntaje'
     ];
     
 

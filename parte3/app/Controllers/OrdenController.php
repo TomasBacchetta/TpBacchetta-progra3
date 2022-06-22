@@ -24,7 +24,6 @@ class OrdenController {
         $ordenNueva = new Orden();
         $ordenNueva->pedido_id = $param["pedido_id"];
         $ordenNueva->producto_id = $param["producto_id"];
-        $ordenNueva->empleado_id = AutentificadorJWT::ObtenerId($token);
         $ordenNueva->cantidad = $param["cantidad"];
         
        
@@ -312,44 +311,7 @@ class OrdenController {
         return $response->withHeader("Content-Type", "application/json");
     }
 
-    /*
-    public function CambiarEstado($request, $response, $args){
-        $num_orden = $args["num_orden"];
-        $param = $request->getParsedBody();
-        $estado = $param["estado"];
-
-        $orden = Orden::obtenerOrden($num_orden);
-        $orden->estado = $estado;
-        
-
-        $pedido = Pedido::obtenerPedido($orden->num_pedido);
-
-        switch ($estado){
-            case "en_preparacion":
-                $orden->tiempo_inicio = date("Y-m-d H:i:s"); 
-                break;
-            case "preparada":
-                
-                break;
-        }
-
-        $orden->modificarOrden();
-
-        $payload = json_encode(array("mensaje"=> "Estado de orden cambiado a " . $estado));
-
-        $response->getBody()->write($payload);
-
-        return $response->withHeader("Content-Type", "application/json");
-    }
-    */
-    /*
-    estados:
-    -Iniciada (automático al crear el pedido)
-    -En preparacion (cambiado por el empleado correspondiente)
-    -Preparada
-
-*/
-    
+   
     
 
     

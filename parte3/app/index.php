@@ -130,12 +130,13 @@ $app->group("/ordenes", function (RouteCollectorProxy $group){
   $group->post('[/]', \OrdenController::class . ':CargarUno')->add(\Logger::class . ":VerificarMozo");
   $group->post('/{id}', \OrdenController::class . ':CambiarEstado')->add(\Logger::class . ':VerificarEmpleadoEspecifico');
   $group->put('/{id}', \OrdenController::class . ':ModificarUno');
-  $group->delete('/{id}', \OrdenController::class . ':BorrarUno');
+  $group->delete('/{id}', \OrdenController::class . ':BorrarUno')->add(\Logger::class . ":VerificarMozo");;
 })->add(\MiddleWareJWT::class . ':ValidarTokenMiembros');
 
 $app->group("/encuestas", function (RouteCollectorProxy $group){
-  $group->get('[/]', \EncuestaController::class . ':TraerTodos')->add(\MiddlewareJWT::class . ':ValidarTokenMiembros');//filtrarlas para los demas empleados
-  $group->post('[/]', \EncuestaController::class . ':CargarUno')->add(\MiddleWareJWT::class . ':ValidarTokenClientes');
+  $group->get('[/]', \EncuestaController::class . ':TraerTodos')->add(\Logger::class . ':VerificarAdmin')->add(\MiddlewareJWT::class . ':ValidarTokenMiembros');
+  $group->get('/puntaje_restaurante', \EncuestaController::class . ':TraerPuntajeRestaurante')->add(\Logger::class . ':VerificarAdmin')->add(\MiddlewareJWT::class . ':ValidarTokenMiembros');
+  $group->post('[/]', \EncuestaController::class . ':CargarUno')->add(\ValidadorParams::class . ':ValidarParamsEncuestas')->add(\MiddleWareJWT::class . ':ValidarTokenClientes');
   $group->delete('/{id}', \EncuestaController::class . ':BorrarUno')->add(\Logger::class . ':VerificarAdmin')->add(\MiddlewareJWT::class . ':ValidarTokenMiembros');
 });
 

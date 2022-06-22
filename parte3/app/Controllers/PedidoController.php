@@ -252,7 +252,7 @@ class PedidoController {
                     $pdf->writeHTML($texto, true, false, true, false, '');
 
         
-
+        ob_end_clean();
         $pdf->Output($id . '.pdf', 'I');
         
         return $response->withHeader("Content-Type", "application/pdf");

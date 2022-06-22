@@ -7,6 +7,7 @@ use App\Models\empleado as empleado;
 use App\Models\producto as producto;
 use App\Models\pedido as pedido;
 use App\Models\mesa as mesa;
+use App\Models\encuesta as encuesta;
 
 
 class ValidadorParams {
@@ -414,6 +415,12 @@ class ValidadorParams {
         $pedido_id = AutentificadorJWT_Clientes::ObtenerIdPedido($token);
         $response = new Response();
 
+        if (encuesta::YaHayEncuestaParaEsePedido($pedido_id)){
+            $payload = json_encode(array("Mensaje" => "Ya se hizo la encuesta"));
+            $response->getBody()->write($payload);
+            return $response->withStatus(403);
+        }
+
         if (mesa::where("id", $mesa_id)->first()->estado != "Con cliente pagando"){
             $payload = json_encode(array("Mensaje" => "Aun no puede realizarse la encuesta"));
             $response->getBody()->write($payload);
@@ -432,6 +439,7 @@ class ValidadorParams {
             !array_key_exists("calificacion_cocinero", $dato) ||
             !array_key_exists("calificacion_cervecero", $dato) ||
             !array_key_exists("calificacion_bartender", $dato)){
+
             $payload = json_encode(array("Mensaje" => "Falta algun parametro"));
             $response->getBody()->write($payload);
             return $response->withStatus(403);
@@ -441,9 +449,26 @@ class ValidadorParams {
             ($dato["calificacion_restaurante"] < 1 || $dato["calificacion_restaurante"] > 10) ||
             ($dato["calificacion_mozo"] < 1 || $dato["calificacion_mozo"] > 10) ||
             (($dato["calificacion_cocinero"] < 1 || $dato["calificacion_cocinero"] > 10) && pedido::PedidoTieneCocinero($pedido_id)) ||
-            (($dato["calificacion_cocinero"] < 1 || $dato["calificacion_cocinero"] > 10) && pedido::PedidoTieneCocinero($pedido_id)) ||
-            (($dato["calificacion_cocinero"] < 1 || $dato["calificacion_cocinero"] > 10) && pedido::PedidoTieneCocinero($pedido_id))){
+            (($dato["calificacion_cervecero"] < 1 || $dato["calificacion_cervecero"] > 10) && pedido::PedidoTieneCervecero($pedido_id)) ||
+            (($dato["calificacion_bartender"] < 1 || $dato["calificacion_bartender"] > 10) && pedido::PedidoTieneBartender($pedido_id))){
+                
+                $payload = json_encode(array("Mensaje" => "Error en alguna calificacion"));
+                $response->getBody()->write($payload);
+                return $response->withStatus(403);
+            
 
+        }
+
+        if (strlen($dato["comentario"]) < 20){
+            $payload = json_encode(array("Mensaje" => "Comentario demasiado corto (Por lo menos 20 caracteres)"));
+            $response->getBody()->write($payload);
+            return $response->withStatus(403);
+        }
+
+        if (strlen($dato["comentario"]) > 66){
+            $payload = json_encode(array("Mensaje" => "Comentario demasiado largo (hasta 66 caracteres)"));
+            $response->getBody()->write($payload);
+            return $response->withStatus(403);
         }
 
         

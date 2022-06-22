@@ -28,6 +28,7 @@ class EmpleadoController {
         $empleadoNuevo->clave = $clave;
         $empleadoNuevo->puesto = $puesto;
         $empleadoNuevo->estado = "Activo";
+        $empleadoNuevo->puntaje = 0;
         
         $empleadoNuevo->save();
 
@@ -41,7 +42,8 @@ class EmpleadoController {
 
     public function TraerUno($request, $response, $args){
         $id = $args["id"];
-        $empleado = empleado::where('id', $id)->first();
+        //$empleado = empleado::where('id', $id)->first();
+        $empleado = empleado::ObtenerEmpleadosDeUnPedido($id);
         $payload = json_encode($empleado);
 
         $response->getBody()->write($payload);

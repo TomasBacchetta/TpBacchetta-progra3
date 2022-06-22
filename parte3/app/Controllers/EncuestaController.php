@@ -9,10 +9,11 @@ BASE DE DATOS
 
 */
 use \App\Models\encuesta as encuesta;
+use \App\Models\empleado as empleado;
 use GuzzleHttp\Psr7\Stream;
 
 
-class encuestaController {
+class EncuestaController {
 
 
     public function CargarUno($request, $response, $args){
@@ -21,30 +22,32 @@ class encuestaController {
         $token = trim(explode("Bearer", $header)[1]);
 
         $pedido_id = AutentificadorJWT_Clientes::ObtenerIdPedido($token);
-        $encuesta_mesa = $param["encuesta_mesa"];
-        $encuesta_restaurante = $param["encuesta_restaurante"];
-        $encuesta_mozo = $param["encuesta_mozo"];
-        $encuesta_cocinero = $param["encuesta_cocinero"];
-        $encuesta_cervecero = $param["encuesta_cervecero"];
-        $encuesta_bartender = $param["encuesta_bartender"];
-        $pedicomentariodo_id = $param["comentario"];
+        $calificacion_mesa = $param["calificacion_mesa"];
+        $calificacion_restaurante = $param["calificacion_restaurante"];
+        $calificacion_mozo = $param["calificacion_mozo"];
+        $calificacion_cocinero = $param["calificacion_cocinero"];
+        $calificacion_cervecero = $param["calificacion_cervecero"];
+        $calificacion_bartender = $param["calificacion_bartender"];
+        $comentario = $param["comentario"];
         
         
 
         $encuestaNueva = new encuesta();
         $encuestaNueva->pedido_id = $pedido_id;
-        $encuestaNueva->encuesta_mesa = $encuesta_mesa;
-        $encuestaNueva->encuesta_restaurante = $encuesta_restaurante;
-        $encuestaNueva->encuesta_mozo = $encuesta_mozo;
-        $encuestaNueva->encuesta_cocinero = $encuesta_cocinero;
-        $encuestaNueva->encuesta_cervecero = $encuesta_cervecero;
-        $encuestaNueva->encuesta_bartender = $encuesta_bartender;
-        $encuestaNueva->pedicomentariodo_id = $pedicomentariodo_id;
+        $encuestaNueva->calificacion_mesa = $calificacion_mesa;
+        $encuestaNueva->calificacion_restaurante = $calificacion_restaurante;
+        $encuestaNueva->calificacion_mozo = $calificacion_mozo;
+        $encuestaNueva->calificacion_cocinero = $calificacion_cocinero;
+        $encuestaNueva->calificacion_cervecero = $calificacion_cervecero;
+        $encuestaNueva->calificacion_bartender = $calificacion_bartender;
+        $encuestaNueva->comentario = $comentario;
    
         
         $encuestaNueva->save();
 
-        $payload = json_encode(array("mensaje" => "Encuesta generada"));
+        empleado::actualizarPuntajeEmpleadosDeUnPedido($pedido_id);
+
+        $payload = json_encode(array("mensaje" => "Encuesta generada. Gracias por su participacion"));
         $response->getBody()->write($payload);
 
         return $response->withHeader("Content-Type", "application/json");

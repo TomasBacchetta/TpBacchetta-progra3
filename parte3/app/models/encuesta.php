@@ -41,6 +41,15 @@ class encuesta extends Model{
         }
         
     }
+
+    public static function YaHayEncuestaParaEsePedido($pedido_id){
+        $encuesta = encuesta::where("pedido_id", $pedido_id)->first();
+        if (isset($encuesta)){
+            return true;
+        } else {
+            return false;
+        }
+    }
     
 }
 
