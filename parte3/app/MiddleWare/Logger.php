@@ -28,6 +28,26 @@ class Logger {
         
     }
 
+    
+    //TRABAJAR CON ESTO
+    /*
+    $id = self::ObtenerId($token);
+        if (self::ObtenerPuesto($token) == "Admin"){
+            if (!admin::existeEmpleado_PorIdSinBorrar($id)){
+                throw new Exception("Ese admin ya no existe");
+            }
+
+            
+        } else {
+            if (!empleado::existeEmpleado_PorIdSinBorrar($id) ||
+                empleado::where("id", $id)->first()->estado == "Inactivo"){
+                    throw new Exception("Ese empleado ya no existe o esta inactivo");
+            }
+            
+        }
+
+    */
+
     public static function VerificarAdminOMozo($request, $handler)
     {
         $header = $request->getHeaderLine('Authorization');

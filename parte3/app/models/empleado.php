@@ -71,20 +71,37 @@ class empleado extends Model{
         
     }
 
+    public static function existeEmpleado_PorIdSinBorrar($id){
+        $empleado = empleado::where("id", "=", $id)->first();
+        if (isset($empleado)){
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
+
     public static function ObtenerEmpleadosDeUnPedido($pedido_id){
         $empleados = Capsule::table('empleados')
         ->join('ordens', 'ordens.empleado_id', '=', 'empleados.id')
         ->join('pedidos', 'pedidos.id', '=', 'ordens.pedido_id')
         ->select('empleados.*')
         ->where('pedidos.id', $pedido_id)->get();
-        return $empleados;
+
+        return $empleados->unique('id');
+
+    }
+
+    public static function ObtenerMozoDeUnPedido($pedido_id){
+        $mozo_id = pedido::where("id", $pedido_id)->first()->mozo_id;
+        $mozo = empleado::where("id", $mozo_id)->first();
+        return $mozo;
 
     }
 
     public static function actualizarPuntajeEmpleadosDeUnPedido($pedido_id){
 
         $empleados = empleado::ObtenerEmpleadosDeUnPedido($pedido_id);
-
         foreach ($empleados as $eEmpleado){
             $sumatoriaPuntajes = 0;
             switch ($eEmpleado->puesto){
@@ -101,9 +118,12 @@ class empleado extends Model{
             $encuestas = Capsule::table('encuestas')
             ->join('pedidos', 'pedidos.id', '=', 'encuestas.pedido_id')
             ->join('ordens', 'ordens.pedido_id', '=', 'pedidos.id')
-            ->join('empleados', 'empleados.id', '=', 'ordens.empleado_id')
             ->select('encuestas.*')
-            ->where('empleados.id', $eEmpleado->id)->get();
+            ->where('ordens.empleado_id', $eEmpleado->id)->get();
+
+
+            $encuestas = $encuestas->unique('id');
+
 
             if (count($encuestas) > 0){
                 foreach ($encuestas as $eEncuesta){
@@ -115,8 +135,32 @@ class empleado extends Model{
                 $empleadoAModificar->puntaje = $puntaje;
                 $empleadoAModificar->save();
             }
+
+
+            //mozo (siemrpre sera uno)
+            $sumatoriaPuntajesMozo = 0;
+            $mozo = empleado::ObtenerMozoDeUnPedido($pedido_id);
+            $mozo_id = $mozo->id;
+            $mozoAModificar = empleado::where("id", $mozo_id)->first();
+
+            $encuestasMozo = Capsule::table('encuestas')
+            ->join('pedidos', 'pedidos.id', '=', 'encuestas.pedido_id')
+            ->select('encuestas.*')
+            ->where('pedidos.mozo_id', $mozo_id)->get();
+
+            $encuestasMozo = $encuestasMozo->unique('id');
+
+            if (count($encuestasMozo) > 0){
+                foreach ($encuestasMozo as $eEncuesta){
+                    $sumatoriaPuntajesMozo += $eEncuesta->calificacion_mozo;
+                }
+                
+                $puntaje = $sumatoriaPuntajesMozo/count($encuestasMozo);
+                $mozoAModificar->puntaje = $puntaje;
+                $mozoAModificar->save();
+            }
+
             
-            //$eEmpleado->save();
         }
         
 

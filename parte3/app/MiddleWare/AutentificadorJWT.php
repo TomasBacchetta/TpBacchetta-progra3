@@ -1,6 +1,8 @@
 <?php
 
 use Firebase\JWT\JWT;
+use \App\Models\empleado as empleado;
+use \App\Models\admin as admin;
 
 class AutentificadorJWT
 {
@@ -37,6 +39,7 @@ class AutentificadorJWT
         if ($decodificado->aud !== self::Aud()) {
             throw new Exception("No es el usuario valido");
         }
+            
     }
 
 
