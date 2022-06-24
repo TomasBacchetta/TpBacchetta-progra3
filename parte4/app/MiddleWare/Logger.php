@@ -30,17 +30,6 @@ class Logger {
     }
 
     
-    //TRABAJAR CON ESTO
-    /*
-   
-            if (!empleado::existeEmpleado_PorIdSinBorrar($id) ||
-                empleado::where("id", $id)->first()->estado == "Inactivo"){
-                    throw new Exception("Ese empleado ya no existe o esta inactivo");
-            }
-            
-        
-
-    */
 
     public static function VerificarAdminOMozo($request, $handler)
     {
@@ -122,7 +111,7 @@ class Logger {
         if (orden::SiOrdenEsDelEmpleado($id_orden, $id_empleado) ||
             (orden::ObtenerEstadoPorId($id_orden) == "Abierta" && 
              orden::SiOrdenEsDelSectorDelEmpleado($id_orden, $id_empleado) && 
-             empleado::where("id", $id_empleado)->estado != "Inactivo")){
+             empleado::where("id", $id_empleado)->first()->estado != "Inactivo")){
             $response = $handler->handle($request); //ejecuta la funcion del controller
             return $response;
         } else {

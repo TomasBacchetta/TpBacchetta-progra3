@@ -23,6 +23,7 @@ namespace App\Models;
 
 use \Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use TCPDF;
 
 class pedido extends Model{
    
@@ -42,7 +43,7 @@ class pedido extends Model{
 
     public static function ObtenerPedidosDelMozo($mozo_id){
         
-        $pedidos = pedido::where("mozo_id", $mozo_id)->get();
+        $pedidos = pedido::where("mozo_id", $mozo_id)->where("estado", "!=", "Pagado")->get();
         $arrayPedidos = array();
         foreach ($pedidos as $ePedido){
             $ordenesDelPedido = orden::where("pedido_id", $ePedido->id)->orderBy("id", "desc")->get();
@@ -59,6 +60,16 @@ class pedido extends Model{
 
     public static function existePedido_PorId($id){
         $pedido = pedido::where("id", "=", $id)->withTrashed()->first();
+        if (isset($pedido)){
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
+
+    public static function existePedido_PorId_SinBorrados($id){
+        $pedido = pedido::where("id", "=", $id)->first();
         if (isset($pedido)){
             return true;
         } else {
@@ -102,6 +113,45 @@ class pedido extends Model{
             }
         }
         return false;
+    }
+
+    public static function CrearFacturaPDF($id){
+        $pedido = pedido::where("id", $id)->first();
+        $ordenes = orden::where("pedido_id", $id)->get();
+        $mozo = empleado::where("id", $pedido->mozo_id)->first();
+
+        $textoOrdenes = "<dl>";
+
+        foreach ($ordenes as $eOrden){
+            $producto = producto::where("id", $eOrden->producto_id)->first();
+            $textoOrdenes .= '<dt> x' . $eOrden->cantidad . ' ' . $producto->descripcion . '-------$' . $producto->precio . '</dt>';
+            $textoOrdenes .= '<dd>Subtotal: $' . $eOrden->subtotal . '</dd>';
+        }
+
+        $textoOrdenes .= "</dl>";
+
+
+        
+        $pdf = new TCPDF('P', 'mm', 'A5', true, 'UTF-8', false, true);
+    
+        $pdf->addPage();
+        $texto = '<img src="./logo/logo.png" alt="test alt attribute" width="60" height="60" border="0" />
+                    <h1>Factura</h1> <br>
+                    Fecha: ' . date("y-m-d") . '<br>
+                    Pedido N°: ' . $id . '<br>
+                    Mesa N°: ' . $pedido->mesa_id .'<br> 
+                    Mozo: ' . $mozo->nombre .'<br> 
+                    <ol>
+                        
+                        
+                        
+                    ' . $textoOrdenes . '<br><br> Total:$' . $pedido->total;
+                    $pdf->writeHTML($texto, true, false, true, false, '');
+
+        
+        ob_end_clean();
+
+        return $pdf;
     }
     /*
 

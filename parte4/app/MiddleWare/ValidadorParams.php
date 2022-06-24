@@ -195,6 +195,11 @@ class ValidadorParams {
                                     $response->getBody()->write($payload);
                                     return $response->withStatus(403);
                         }
+                        if ($dato["estado"] != "Cerrada" && AutentificadorJWT::ObtenerPuesto($token) == "admin"){
+                            $payload = json_encode(array("Mensaje" => "Solo los mozos pueden hacer eso"));
+                                    $response->getBody()->write($payload);
+                                    return $response->withStatus(403);
+                        }
                     }
                 }
                 
@@ -218,6 +223,7 @@ class ValidadorParams {
         
           
     }
+    
 
     public static function ValidarParamsProductos($request, $handler){
         $method = $request->getMethod();
@@ -305,6 +311,31 @@ class ValidadorParams {
         return $response;
         
           
+    }
+
+    public static function ValidarParamsOrdenes($request, $handler){
+        $dato = $request->getParsedBody();
+        $pedido_id = $dato["pedido_id"];
+        $producto_id = $dato["producto_id"];
+
+        $response = new Response();
+
+        if (!pedido::existePedido_PorId_SinBorrados($pedido_id)){
+                $payload = json_encode(array("Mensaje" => "No existe ese pedido"));
+                $response->getBody()->write($payload);
+                return $response->withStatus(403); 
+        }
+
+        if (!producto::existeProducto_PorIdSinBorrados($producto_id)){
+            $payload = json_encode(array("Mensaje" => "No existe ese producto"));
+            $response->getBody()->write($payload);
+            return $response->withStatus(403); 
+        }
+
+        $response = $handler->handle($request);
+        return $response;
+
+    
     }
 
 

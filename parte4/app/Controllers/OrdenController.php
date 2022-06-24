@@ -34,8 +34,11 @@ class OrdenController {
         $ordenNueva->subtotal = $producto->precio * $ordenNueva->cantidad;
         $ordenNueva->tiempo_estimado = $producto->tiempo_estimado;
         $ordenNueva->estado = "Abierta";
-        
+
+        registro::CrearRegistro(AutentificadorJWT::ObtenerId($token), "Agrego orden a un pedido");
+
         $ordenNueva->save();
+        
 
         //actualizando producto
 
@@ -186,7 +189,7 @@ class OrdenController {
             //el empleado idoneo toma una orden En Preparacion y la cambia a Preparada
             //si esta fue la ultima orden que se necesitaba preparar para el pedido
             //vinculado, el pedido pasa a estar En Preparacion
-            registro::CrearLog(AutentificadorJWT::ObtenerId($token), "Termino la orden n°" . $id . "del pedido n°" . pedido::where("id", $pedido_id)->first()->id);
+            registro::CrearRegistro(AutentificadorJWT::ObtenerId($token), "Termino la orden n°" . $id . "del pedido n°" . pedido::where("id", $pedido_id)->first()->id);
             $ordenes = orden::ObtenerOrdenesAbiertasPorPedido($pedido_id);
             if (!$ordenes){//si ya no hay ordenes abiertas
                 $pedido = pedido::where("id", $pedido_id)->first();

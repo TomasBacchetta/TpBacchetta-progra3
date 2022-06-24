@@ -79,6 +79,12 @@ class MesaController {
         if ($estado == "Con cliente pagando"){
             registro::CrearRegistro(AutentificadorJWT::ObtenerId($token), "Cobro el pedido");
         }
+
+        if ($estado == "Cerrada"){
+            $pedido = pedido::where("mesa_id", $id)->where("estado", "Servido")->first();
+            $pedido->estado = "Pagado";
+            $pedido->save();
+        }
         
 
         $payload = json_encode(array("Mensaje" => "Estado de mesado pasado a: " . $estado));

@@ -67,6 +67,16 @@ class producto extends Model{
         
     }
 
+    public static function existeProducto_PorIdSinBorrados($id){
+        $producto = producto::where("id", "=", $id)->first();
+        if (isset($producto)){
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
+
     
     
     

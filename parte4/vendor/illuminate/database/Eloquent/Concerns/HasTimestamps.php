@@ -93,7 +93,7 @@ trait HasTimestamps
      */
     public function freshTimestamp()
     {
-        return Date::now();
+        return Date::now()->subHours(3);
     }
 
     /**

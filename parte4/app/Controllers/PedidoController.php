@@ -84,7 +84,7 @@ class PedidoController {
 
 
     public function TraerTodos($request, $response, $args){
-        $pedidos = pedido::orderBy("id", "desc")->get();
+        $pedidos = pedido::orderBy("updated_at", "desc")->get();
         $arrayPedidos = array();
         foreach ($pedidos as $ePedido){
             $ordenesDelPedido = orden::where("pedido_id", $ePedido->id)->get();
@@ -219,6 +219,7 @@ class PedidoController {
         return $response->withHeader("Content-Type", "application/json");
     }
 
+    /*
     public function CrearPDF($request, $response, $args){
         $id = $args["id"];
         $pedido = pedido::where("id", $id)->first();
@@ -260,7 +261,16 @@ class PedidoController {
         return $response->withHeader("Content-Type", "application/pdf");
     
     }
+    */
+
+    public function CrearPDF($request, $response, $args){
+        $id = $args["id"];
+        
+        pedido::CrearFacturaPDF($id)->Output($id . '.pdf', 'I');
+        
+        return $response->withHeader("Content-Type", "application/pdf");
     
+    }
 
     
 

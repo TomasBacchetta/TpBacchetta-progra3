@@ -53,7 +53,6 @@ require_once "./Controllers/OrdenController.php";
 require_once './models/admin.php';
 require_once "./Controllers/AdminController.php";
 
-Config::get('app.timezone');
 
 
 // Load ENV
@@ -135,7 +134,7 @@ $app->group("/pedidos", function (RouteCollectorProxy $group){
 $app->group("/ordenes", function (RouteCollectorProxy $group){
   $group->get('[/]', \OrdenController::class . ':TraerTodos')->add(\FiltrosListas::class . ':FiltrarVistaOrdenes');
   $group->get('/{id}', \OrdenController::class . ':TraerUno');
-  $group->post('[/]', \OrdenController::class . ':CargarUno')->add(\Logger::class . ":VerificarMozo");
+  $group->post('[/]', \OrdenController::class . ':CargarUno')->add(\Logger::class . ":VerificarMozo")->add(\ValidadorParams::class . ':ValidarParamsOrdenes');
   $group->post('/{id}', \OrdenController::class . ':CambiarEstado')->add(\Logger::class . ':VerificarEmpleadoEspecifico');
   $group->put('/{id}', \OrdenController::class . ':ModificarUno');
   $group->delete('/{id}', \OrdenController::class . ':BorrarUno')->add(\Logger::class . ":VerificarMozo");;
