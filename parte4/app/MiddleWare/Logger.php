@@ -55,6 +55,8 @@ class Logger {
         
     }
 
+   
+
     public static function VerificarMozo($request, $handler)
     {
         $header = $request->getHeaderLine('Authorization');

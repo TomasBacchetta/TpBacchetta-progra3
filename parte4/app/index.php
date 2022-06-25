@@ -36,6 +36,8 @@ require_once './MiddleWare/FiltrosListas.php';
 
 require_once "./Controllers/LoginController.php";
 
+require_once './models/estadisticas.php';
+require_once "./Controllers/EstadisticasController.php";
 require_once './models/registro.php';
 require_once "./Controllers/RegistroController.php";
 require_once './models/encuesta.php';
@@ -159,6 +161,13 @@ $app->group('/login', function (RouteCollectorProxy $group) {
   $group->post('/clientes', \LoginController::class . ':verificarCliente');
 });
 
+$app->group('/clientes', function (RouteCollectorProxy $group) {
+  $group->get('/verpedido', \PedidoController::class . ':TraerUno_De_Cliente');
+})->add(\MiddlewareJWT::class . ':ValidarTokenClientes');
+
+$app->group('/estadisticas', function (RouteCollectorProxy $group) {
+  $group->get('/general', \EstadisticasController::class . ':MostrarEstadisticaGeneral');
+})->add(\Logger::class . ':VerificarAdmin')->add(\MiddlewareJWT::class . ':ValidarTokenMiembros');
 
 
 

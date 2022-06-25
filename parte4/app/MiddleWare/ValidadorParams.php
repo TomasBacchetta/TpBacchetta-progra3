@@ -332,6 +332,12 @@ class ValidadorParams {
             return $response->withStatus(403); 
         }
 
+        if (pedido::where("id", $pedido_id)->first()->estado == "Pagado"){
+            $payload = json_encode(array("Mensaje" => "El producto ya fue pagado. No pueden agregarse mas ordenes"));
+            $response->getBody()->write($payload);
+            return $response->withStatus(403); 
+        }
+
         $response = $handler->handle($request);
         return $response;
 
@@ -506,6 +512,8 @@ class ValidadorParams {
         $response = $handler->handle($request);
         return $response;
     }
+
+    
    
     
 }

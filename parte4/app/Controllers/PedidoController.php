@@ -82,6 +82,25 @@ class PedidoController {
         
     }
 
+    public function TraerUno_De_Cliente($request, $response, $args){
+        $header = $request->getHeaderLine('Authorization');
+        $token = trim(explode("Bearer", $header)[1]);
+        $pedido_id = AutentificadorJWT_Clientes::ObtenerIdPedido($token);
+        $pedido = pedido::where("id", $pedido_id)->first();
+        $ordenesDelPedido = orden::where("pedido_id", $pedido->id)->get();
+        $jsonPedido = json_encode($pedido);   
+        $jsonOrdenesDelPedido = json_encode($ordenesDelPedido);
+        $arrayCombinado = array("pedido" => json_decode($jsonPedido, true),
+                        "ordenes" => json_decode($jsonOrdenesDelPedido, true)
+        );
+        
+        $payload = json_encode($arrayCombinado, JSON_PRETTY_PRINT);
+        $response->getBody()->write($payload);
+
+        return $response->withHeader("Content-Type", "application/json");
+        
+    }
+
 
     public function TraerTodos($request, $response, $args){
         $pedidos = pedido::orderBy("updated_at", "desc")->get();

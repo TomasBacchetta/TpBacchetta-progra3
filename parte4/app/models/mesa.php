@@ -53,6 +53,16 @@ class mesa extends Model{
         }
         
     }
+
+    public static function MesaTienePedido($id){
+        $pedido = pedido::where("mesa_id", $id)->first();
+        if (isset($pedido)){
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
 }
 
 

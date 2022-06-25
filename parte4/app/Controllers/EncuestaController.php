@@ -46,6 +46,7 @@ class EncuestaController {
         $encuestaNueva->save();
 
         empleado::actualizarPuntajeEmpleadosDeUnPedido($pedido_id);
+        //actualizar puntaje mesa
 
         $payload = json_encode(array("mensaje" => "Encuesta generada. Gracias por su participacion"));
         $response->getBody()->write($payload);

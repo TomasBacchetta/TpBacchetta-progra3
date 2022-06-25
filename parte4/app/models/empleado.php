@@ -86,7 +86,7 @@ class empleado extends Model{
         ->join('ordens', 'ordens.empleado_id', '=', 'empleados.id')
         ->join('pedidos', 'pedidos.id', '=', 'ordens.pedido_id')
         ->select('empleados.*')
-        ->where('pedidos.id', $pedido_id)->get();
+        ->where('pedidos.id', $pedido_id)->withTrashed()->get();
 
         return $empleados->unique('id');
 
@@ -94,9 +94,8 @@ class empleado extends Model{
 
     public static function ObtenerMozoDeUnPedido($pedido_id){
         $mozo_id = pedido::where("id", $pedido_id)->first()->mozo_id;
-        $mozo = empleado::where("id", $mozo_id)->first();
-        return $mozo->unique('id');
-
+        $mozo = empleado::where("id", $mozo_id)->withTrashed()->first();
+        return $mozo;
     }
 
     public static function actualizarPuntajeEmpleadosDeUnPedido($pedido_id){

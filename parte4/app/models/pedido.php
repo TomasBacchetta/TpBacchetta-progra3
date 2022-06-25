@@ -35,7 +35,8 @@ class pedido extends Model{
         'total',
         'tiempo_estimado',
         'estado',
-        'foto_mesa',
+        'con_retraso',
+        'foto_mesa'
 
     ];
 
