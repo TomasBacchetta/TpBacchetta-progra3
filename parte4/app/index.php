@@ -126,8 +126,10 @@ $app->group("/productos", function (RouteCollectorProxy $group){
 })->add(\MiddleWareJWT::class . ':ValidarTokenMiembros');
 
 $app->group("/pedidos", function (RouteCollectorProxy $group){
-  $group->get('[/]', \PedidoController::class . ':TraerTodos')->add(\FiltrosListas::class . ':FiltrarVistaPedidos');;
-  $group->get('/{id}', \PedidoController::class . ':TraerUno');
+  $group->get('/todos', \PedidoController::class . ':TraerTodos')->add(\FiltrosListas::class . ':FiltrarVistaPedidos');
+  $group->get('/uno/{id}', \PedidoController::class . ':TraerUno');
+  $group->get('/cancelados', \PedidoController::class . ':TraerCancelados')->add(\FiltrosListas::class . ':FiltrarVistaPedidos');
+  $group->get('/atrasados', \PedidoController::class . ':TraerAtrasados')->add(\FiltrosListas::class . ':FiltrarVistaPedidos');
   $group->post('[/]', \PedidoController::class . ':CargarUno')->add(\ValidadorParams::class . ':ValidarParamsCargaPedidos')->add(\Logger::class . ":VerificarMozo");
   $group->put('/{id}', \PedidoController::class . ':ModificarUno')->add(\Logger::class . ":VerificarMozo");
   $group->delete('/{id}', \PedidoController::class . ':BorrarUno');
@@ -139,7 +141,7 @@ $app->group("/ordenes", function (RouteCollectorProxy $group){
   $group->post('[/]', \OrdenController::class . ':CargarUno')->add(\Logger::class . ":VerificarMozo")->add(\ValidadorParams::class . ':ValidarParamsOrdenes');
   $group->post('/{id}', \OrdenController::class . ':CambiarEstado')->add(\Logger::class . ':VerificarEmpleadoEspecifico');
   $group->put('/{id}', \OrdenController::class . ':ModificarUno');
-  $group->delete('/{id}', \OrdenController::class . ':BorrarUno')->add(\Logger::class . ":VerificarMozo");;
+  $group->delete('/{id}', \OrdenController::class . ':BorrarUno')->add(\Logger::class . ":VerificarMozo");
 })->add(\MiddleWareJWT::class . ':ValidarTokenMiembros');
 
 $app->group("/encuestas", function (RouteCollectorProxy $group){
@@ -272,7 +274,7 @@ $app->group('/jwt', function (RouteCollectorProxy $group) {
 
 
 
-$app->post('[/]', function (Request $request, Response $response) {
+$app->get('[/]', function (Request $request, Response $response) {
     $response->getBody()->write("TP BACCHETTA");
     return $response;
 });

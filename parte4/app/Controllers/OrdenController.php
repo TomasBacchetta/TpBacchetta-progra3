@@ -15,7 +15,7 @@ use GuzzleHttp\Psr7\Stream;
 use \App\Models\registro as registro;
 use Illuminate\Support\Facades\Date;
 
-require_once "./Models/time.php";
+require_once "./models/time.php";
 
 class OrdenController {
 

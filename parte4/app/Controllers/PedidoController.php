@@ -122,6 +122,47 @@ class PedidoController {
 
     }
 
+    public function TraerAtrasados($request, $response, $args){
+        $pedidos = pedido::orderBy("updated_at", "desc")->where("con_retraso", "SI")->get();
+        $arrayPedidos = array();
+        foreach ($pedidos as $ePedido){
+            $ordenesDelPedido = orden::where("pedido_id", $ePedido->id)->get();
+            $jsonPedido = json_encode($ePedido);  
+            $jsonOrdenesDelPedido = json_encode($ordenesDelPedido);
+            $arrayCombinado = array("pedido" => json_decode($jsonPedido, true),
+                        "ordenes" => json_decode($jsonOrdenesDelPedido, true)
+        );
+        array_push($arrayPedidos, $arrayCombinado);
+        }
+        
+        $payload = json_encode($arrayPedidos, JSON_PRETTY_PRINT);
+        $response->getBody()->write($payload);
+
+        return $response->withHeader("Content-Type", "application/json");
+
+    }
+
+    public function TraerCancelados($request, $response, $args){
+        $pedidos = pedido::orderBy("updated_at", "desc")->where("estado", "Cancelado")->get();
+        $arrayPedidos = array();
+        foreach ($pedidos as $ePedido){
+            $ordenesDelPedido = orden::where("pedido_id", $ePedido->id)->get();
+            $jsonPedido = json_encode($ePedido);  
+            $jsonOrdenesDelPedido = json_encode($ordenesDelPedido);
+            $arrayCombinado = array("pedido" => json_decode($jsonPedido, true),
+                        "ordenes" => json_decode($jsonOrdenesDelPedido, true)
+        );
+        array_push($arrayPedidos, $arrayCombinado);
+        }
+        
+        $payload = json_encode($arrayPedidos, JSON_PRETTY_PRINT);
+        $response->getBody()->write($payload);
+
+        return $response->withHeader("Content-Type", "application/json");
+
+    }
+
+
     
 
     public function ModificarUno($request, $response, $args){
