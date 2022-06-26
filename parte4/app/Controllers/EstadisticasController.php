@@ -1,6 +1,14 @@
 <?php
 
+/*
+BACCHETTA, TOMÁS
+TP PROGRAMACION 3 "LA COMANDA"
+SPRINT 4
+ALTA
+VISUALIZACION
+BASE DE DATOS
 
+*/
 use GuzzleHttp\Psr7\Stream;
 
     class EstadisticasController{

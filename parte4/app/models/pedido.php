@@ -2,7 +2,7 @@
 /*
 BACCHETTA, TOMÁS
 TP PROGRAMACION 3 "LA COMANDA"
-SPRINT 1
+SPRINT 4
 ALTA
 VISUALIZACION
 BASE DE DATOS
@@ -10,12 +10,13 @@ BASE DE DATOS
 */
 
 /*
-estados:
+estados: los estados de los pedidos no se cambian manualmente, dependen del cambio manual de estados de la orden y la mesa vinculadas
 -Abierto (automático al crear el pedido)
 -Con orden (automático al incluir al menos una orden)
--Preparado (automático cuando la ultima orden a preparar se marco como preparada)
--Entregado (lo pone el mozo cuando entrega el pedido a la mesa)
--Pagado (hace falta? automático cuando se cierra la mesa)
+-En preparacion (automatico cuando el estado de la ultima orden que faltaba se marco como En Preparacion)
+-Listo para servir (automático cuando el estado de la ultima orden a preparar se marco como preparada)
+-Servido (automatico cuando el estado de la ultima orden que faltaba se marco como Listo para servir)
+-Pagado (automatico cuando el admin cierra la mesa)
 */
 
 

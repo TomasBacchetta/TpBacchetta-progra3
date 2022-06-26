@@ -1,5 +1,13 @@
 <?php
+/*
+BACCHETTA, TOMÁS
+TP PROGRAMACION 3 "LA COMANDA"
+SPRINT 1
+ALTA
+VISUALIZACION
+BASE DE DATOS
 
+*/
 use Illuminate\Support\Facades\Date;
 
 ///clase propia para trabajar con los timestamps de laravel

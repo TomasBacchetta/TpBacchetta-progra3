@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 26-06-2022 a las 07:30:04
+-- Tiempo de generación: 26-06-2022 a las 19:19:27
 -- Versión del servidor: 10.4.24-MariaDB
 -- Versión de PHP: 8.1.4
 
@@ -69,7 +69,7 @@ CREATE TABLE `empleados` (
 
 INSERT INTO `empleados` (`id`, `nombre`, `clave`, `puesto`, `puntaje`, `estado`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (38, 'Tomi_Cocinero', 1234, 'Cocinero', 6.5, 'Activo', '2022-06-26 04:23:18.464808', '2022-06-26 06:23:18.000000', NULL),
-(39, 'Tomi_Mozo', 1234, 'Mozo', 5, 'Activo', '2022-06-26 03:55:18.797360', '2022-06-26 05:55:18.000000', NULL),
+(39, 'Tomi_Mozo', 1234, 'Mozo', 5, 'Activo', '2022-06-26 16:58:15.106660', '2022-06-26 18:58:15.000000', NULL),
 (40, 'Tomi_Cervecero', 1234, 'Cervecero', 0, 'Activo', '2022-06-22 04:26:04.000000', '2022-06-22 04:26:04.000000', NULL),
 (41, 'Tomi_Bartender', 1234, 'Bartender', 8, 'Activo', '2022-06-22 02:01:47.417071', '2022-06-22 07:01:47.000000', NULL),
 (42, 'Tomi_Bartender2', 1234, 'Bartender', 6.5, 'Activo', '2022-06-23 01:12:34.146062', '2022-06-23 06:12:34.000000', NULL);
@@ -234,7 +234,7 @@ CREATE TABLE `registros` (
 --
 
 INSERT INTO `registros` (`id`, `empleado`, `puesto`, `descripcion`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'Tomi_Mozo', 'Mozo', 'Login', '2022-06-24 01:18:08.000000', '2022-06-24 01:18:08.000000', NULL),
+(1, 'Tomi_Mozo', 'Mozo', 'Login', '2022-06-23 23:18:08.000000', '2022-06-23 23:18:08.000000', NULL),
 (2, 'Tomi_Mozo', 'Mozo', 'Login', '2022-06-24 01:33:11.000000', '2022-06-24 01:33:11.000000', NULL),
 (3, 'Tomi_Mozo', 'Mozo', 'Creo pedido', '0000-00-00 00:00:00.000000', '0000-00-00 00:00:00.000000', NULL),
 (4, 'Tomi_Mozo', 'Mozo', 'Creo pedido', '0000-00-00 00:00:00.000000', '0000-00-00 00:00:00.000000', NULL),
@@ -247,11 +247,9 @@ INSERT INTO `registros` (`id`, `empleado`, `puesto`, `descripcion`, `created_at`
 (11, 'Tomi_Mozo', 'Mozo', 'Creo pedido', '2022-06-23 21:12:58.000000', '2022-06-23 21:12:58.000000', NULL),
 (12, 'Tomi_Mozo', 'Mozo', 'Creo pedido', '2022-06-24 02:13:23.000000', '2022-06-24 02:13:23.000000', NULL),
 (13, 'Tomi_Mozo', 'Mozo', 'Creo pedido', '2022-06-24 02:21:02.000000', '2022-06-24 02:21:02.000000', NULL),
-(14, 'Tomi_Mozo', 'Mozo', 'Creo pedido', '2022-06-24 03:21:33.000000', '2022-06-24 03:21:33.000000', NULL),
 (15, 'Tomi_Mozo', 'Mozo', 'Creo pedido', '2022-06-23 21:22:48.000000', '2022-06-23 21:22:48.000000', NULL),
 (16, 'Tomi_Mozo', 'Mozo', 'Creo pedido', '2022-06-24 22:15:49.000000', '2022-06-24 22:15:49.000000', NULL),
 (17, 'Tomi_Mozo', 'Mozo', 'Creo pedido', '2022-06-24 22:16:06.000000', '2022-06-24 22:16:06.000000', NULL),
-(18, 'Tomi_Mozo', 'Mozo', 'Creo pedido', '2022-06-25 03:16:27.000000', '2022-06-25 03:16:27.000000', NULL),
 (19, 'Tomi_Mozo', 'Mozo', 'Creo pedido', '2022-06-25 00:17:38.000000', '2022-06-25 00:17:38.000000', NULL),
 (20, 'Tomi_Mozo', 'Mozo', 'Login', '2022-06-25 00:32:29.000000', '2022-06-25 00:32:29.000000', NULL),
 (21, 'Tomi_Mozo', 'Mozo', 'Agrego orden a un pedido', '2022-06-25 00:34:57.000000', '2022-06-25 00:34:57.000000', NULL),
@@ -311,7 +309,10 @@ INSERT INTO `registros` (`id`, `empleado`, `puesto`, `descripcion`, `created_at`
 (75, 'Tomi_Cocinero', 'Cocinero', 'Termino la orden n°96, que es la ultima que faltaba del pedido n°75', '2022-06-26 06:13:43.000000', '2022-06-26 06:13:43.000000', NULL),
 (76, 'Tomi_Mozo', 'Mozo', 'Login', '2022-06-26 06:14:43.000000', '2022-06-26 06:14:43.000000', NULL),
 (77, 'Tomi_Mozo', 'Mozo', 'Sirvio el pedido', '2022-06-26 06:14:53.000000', '2022-06-26 06:14:53.000000', NULL),
-(78, 'Tomi_Mozo', 'Mozo', 'Cobro el pedido', '2022-06-26 06:15:44.000000', '2022-06-26 06:15:44.000000', NULL);
+(78, 'Tomi_Mozo', 'Mozo', 'Cobro el pedido', '2022-06-26 06:15:44.000000', '2022-06-26 06:15:44.000000', NULL),
+(79, 'Tomi_Mozo', 'Mozo', 'Estado pasado a Inactivo', '2022-06-26 18:57:41.000000', '2022-06-26 18:57:41.000000', NULL),
+(80, 'Tomi_Mozo', 'Mozo', 'Estado pasado a Activo', '2022-06-26 18:58:15.000000', '2022-06-26 18:58:15.000000', NULL),
+(81, 'Tomi_Mozo', 'Mozo', 'Login', '2022-06-26 18:58:25.000000', '2022-06-26 18:58:25.000000', NULL);
 
 --
 -- Índices para tablas volcadas
@@ -415,7 +416,7 @@ ALTER TABLE `productos`
 -- AUTO_INCREMENT de la tabla `registros`
 --
 ALTER TABLE `registros`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -2,7 +2,7 @@
 /*
 BACCHETTA, TOMÁS
 TP PROGRAMACION 3 "LA COMANDA"
-SPRINT 1
+SPRINT 4
 ALTA
 VISUALIZACION
 BASE DE DATOS
@@ -155,7 +155,7 @@ class PedidoController {
 
         $pedidoBorrado = pedido::where("id", $id)->first();
         orden::BorrarTodasLasOrdenesDeUnPedido($id);
-
+        $pedidoBorrado->estado = "Cancelado";
         $pedidoBorrado->delete();
         
         $payload = json_encode(array("mensaje"=> "Pedido con id: " . $id . "eliminado exitosamente junto a todas sus ordenes"));
@@ -221,6 +221,7 @@ class PedidoController {
                     ($array[10] == null || $array[10] == '')){
                     $pedido->deleted_at = null;
                     orden::RestaurarTodasLasOrdenesDeUnPedido($array[0]);
+                    $pedido->estado = $array[5];//restaura el estado que estaba en Cancelado
                 }
 
                 

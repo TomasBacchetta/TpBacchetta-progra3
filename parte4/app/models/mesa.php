@@ -2,7 +2,7 @@
 /*
 BACCHETTA, TOMÁS
 TP PROGRAMACION 3 "LA COMANDA"
-SPRINT 1
+SPRINT 4
 ALTA
 VISUALIZACION
 BASE DE DATOS
@@ -10,9 +10,9 @@ BASE DE DATOS
 */
 /*
 estado:
--con cliente esperando pedido (la pone el mozo)
--con cliente comiendo (la pone el mozo cuando esta preparado/entregado el pedido)
--con cliente pagando (la pone el mozo cuandoesta pagando el cliente. Desencadena la generacion de la factura)
+-con cliente esperando pedido (automatico cuando se carga un pedido para esa mesa)
+-con cliente comiendo (la pone el mozo cuando entrega el pedido que esta preparado)
+-con cliente pagando (la pone el mozo cuandoesta pagando el cliente. Permite generar factura)
 -cerrada (la pone el socio solamente)
 
 */

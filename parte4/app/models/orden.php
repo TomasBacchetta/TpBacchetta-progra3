@@ -2,7 +2,7 @@
 /*
 BACCHETTA, TOMÁS
 TP PROGRAMACION 3 "LA COMANDA"
-SPRINT 1
+SPRINT 4
 ALTA
 VISUALIZACION
 BASE DE DATOS
@@ -10,9 +10,10 @@ BASE DE DATOS
 */
 /*
 estados:
--Iniciada (automático al crear el pedido)
--En preparacion (cambiado por el empleado correspondiente)
--Preparada
+-Abierta (automático al cargar la orden al pedido)
+-En preparacion (cambiado por el empleado del area. La orden pasa a ser su responsabilidad)
+-Lista para servir (cambiado por el empleado responsable)
+-Preparada (cambiada por el empleado responsable)
 
 */
 

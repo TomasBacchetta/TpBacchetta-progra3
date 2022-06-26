@@ -1,5 +1,13 @@
 <?php
+/*
+BACCHETTA, TOMÁS
+TP PROGRAMACION 3 "LA COMANDA"
+SPRINT 4
+ALTA
+VISUALIZACION
+BASE DE DATOS
 
+*/
 use \App\Models\empleado as empleado;
 use \App\Models\admin as admin;
 use \App\Models\registro as registro;

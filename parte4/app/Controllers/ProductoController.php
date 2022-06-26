@@ -2,13 +2,12 @@
 /*
 BACCHETTA, TOMÁS
 TP PROGRAMACION 3 "LA COMANDA"
-SPRINT 1
+SPRINT 4
 ALTA
 VISUALIZACION
 BASE DE DATOS
 
 */
-
 
 
 use \App\Models\producto as producto;

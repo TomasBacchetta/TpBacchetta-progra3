@@ -1,5 +1,13 @@
 <?php
+/*
+BACCHETTA, TOMÁS
+TP PROGRAMACION 3 "LA COMANDA"
+SPRINT 4
+ALTA
+VISUALIZACION
+BASE DE DATOS
 
+*/
 use Illuminate\Support\Facades\Date;
 
 use \App\Models\mesa as mesa;
@@ -51,6 +59,7 @@ class estadisticas {
                     La mesa que menos facturo fue la N°: ' . $mesaMenosFacturo[0] . ' ,por un monto de $' . $mesaMenosFacturo[1] . '<br> 
                     Se hicieron  ' . self::CantidadDePedidosEn30Dias() . ' pedidos <br>
                     Hubo ' . self::CantidadDePedidosConRetrasoEn30Dias() . ' pedidos con retraso <br> 
+                    Hubo ' . self::ObtenerCantidadDePedidosConRechazoEn30Dias() . ' pedidos cancelados <br> 
                     El producto mas popular fue:  ' . self::ProductoQueMasSeVendio(). '  <br> 
                     El producto menos popular fue:  ' . self::ProductoQueMasSeVendio(). '  <br> <br>
                     Mesa/s con mayor importe: <br> 
@@ -89,7 +98,14 @@ class estadisticas {
 
     */
     
-    
+    public static function ObtenerCantidadDePedidosConRechazoEn30Dias(){
+        $fechaActual = Date::now()->subHours(3);
+        $fechaMesAtras = Date::now()->subHours(3)->subDays(30);
+
+        return pedido::where("estado", "Cancelado")
+        ->whereBetween('created_at', [$fechaMesAtras, $fechaActual])->count();
+        
+    }
 
     public static function ObtenerMesasConFacturaDeMayorImporte(){
         $mesas = self::ObtenerFacturasMasCostosasEnTreintaDias();
