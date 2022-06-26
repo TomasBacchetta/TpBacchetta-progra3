@@ -169,7 +169,7 @@ class ProductoController {
             } else {
                 
                 $producto = producto::where("id", $array[0])->withTrashed()->first();
-                if ((!isset($producto->deleted_at) || $producto->deleted_at != '') &&
+                if (count($array) == 8 && (!isset($producto->deleted_at) || $producto->deleted_at != '') &&
                     ($array[8] == null || $array[8] == '')){
                     $producto->deleted_at = null;
                 }

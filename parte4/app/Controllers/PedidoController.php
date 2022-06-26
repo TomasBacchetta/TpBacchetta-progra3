@@ -217,7 +217,7 @@ class PedidoController {
             } else {
                 
                 $pedido = pedido::where("id", $array[0])->withTrashed()->first();
-                if ((!isset($pedido->deleted_at) || $pedido->deleted_at != '') &&
+                if (count($array) == 11 && (!isset($pedido->deleted_at) || $pedido->deleted_at != '') &&
                     ($array[10] == null || $array[10] == '')){
                     $pedido->deleted_at = null;
                     orden::RestaurarTodasLasOrdenesDeUnPedido($array[0]);

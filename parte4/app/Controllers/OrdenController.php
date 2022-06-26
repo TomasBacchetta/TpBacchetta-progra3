@@ -310,6 +310,16 @@ class OrdenController {
                 $orden->updated_at = $array[10];
 
                 $orden->save();
+            } else {
+                
+                $orden = orden::where("id", $array[0])->withTrashed()->first();
+                if (count($array) == 12 && (!isset($orden->deleted_at) || $orden->deleted_at != '') &&
+                    ($array[11] == null || $array[11] == '')){
+                    $orden->deleted_at = null;
+                    
+                }
+
+                
             }
             
 

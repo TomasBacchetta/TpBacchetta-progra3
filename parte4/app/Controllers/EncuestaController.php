@@ -172,7 +172,7 @@ class EncuestaController {
             } else {
                 
                 $encuesta = encuesta::where("id", $array[0])->withTrashed()->first();
-                if ((!isset($encuesta->deleted_at) || $encuesta->deleted_at != '') &&
+                if (count($array) == 12 && (!isset($encuesta->deleted_at) || $encuesta->deleted_at != '') &&
                     ($array[11] == null || $array[11] == '')){
                     $encuesta->deleted_at = null;
                 }

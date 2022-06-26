@@ -33,7 +33,35 @@ class Time{
         $año = $parseado[2];
         //2022-06-26 03:07:44.000000
         
+        $fecha = $año . "-" . $mes . "-" . $dia . " 23:59:59.000000";
+        
+        return $fecha;
+
+
+    }
+    ///se usa como maximo para las consultas de fecha especifica
+    public static function StrFechaToTimestampMin($strFecha){
+        $parseado = explode('-', $strFecha);
+        $dia = $parseado[0];
+        $mes = $parseado[1];
+        $año = $parseado[2];
+        
+        
         $fecha = $año . "-" . $mes . "-" . $dia . " 00:00:00.000000";
+        
+        return $fecha;
+
+
+    }
+
+    public static function InvertirFecha($strFecha){
+        $parseado = explode('-', $strFecha);
+        $dia = $parseado[0];
+        $mes = $parseado[1];
+        $año = $parseado[2];
+        
+        
+        $fecha = $año . "-" . $mes . "-" . $dia;
         
         return $fecha;
 

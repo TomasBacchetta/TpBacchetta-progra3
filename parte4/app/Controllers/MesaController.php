@@ -166,7 +166,7 @@ class MesaController {
             } else {
                 
                 $mesa = mesa::where("id", $array[0])->withTrashed()->first();
-                if ((!isset($mesa->deleted_at) || $mesa->deleted_at != '') &&
+                if (count($array) == 6 && (!isset($mesa->deleted_at) || $mesa->deleted_at != '') &&
                     ($array[5] == null || $array[5] == '')){
                     $mesa->deleted_at = null;
                     

@@ -149,7 +149,7 @@ class AdminController {
             } else {
                 
                 $admin = admin::where("id", $array[0])->withTrashed()->first();
-                if ((!isset($admin->deleted_at) || $admin->deleted_at != '') &&
+                if (count($array) == 6 && (!isset($admin->deleted_at) || $admin->deleted_at != '') &&
                     ($array[5] == null || $array[5] == '')){
                     $admin->deleted_at = null;
                 }

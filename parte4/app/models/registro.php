@@ -31,6 +31,16 @@ class registro extends Model{
 
     }
 
+    public static function existeRegistro_porId($id){
+        $registro = registro::where("id", "=", $id)->withTrashed()->first();
+        if (isset($registro)){
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
+
 } 
 
 

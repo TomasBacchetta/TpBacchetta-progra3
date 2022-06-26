@@ -152,7 +152,9 @@ $app->group("/encuestas", function (RouteCollectorProxy $group){
 
 $app->group("/registros", function (RouteCollectorProxy $group) {
   $group->get('/todos', \RegistroController::class . ':TraerTodos');
-  $group->get('/porEmpleado/{id}', \RegistroController::class . ':TraerPorEmpleado');
+  $group->get('/porEmpleado', \RegistroController::class . ':TraerPorEmpleado');
+  $group->get('/enUnaFecha', \RegistroController::class . ':TraerPorFecha');
+  $group->get('/entreDosfechas', \RegistroController::class . ':TraerEntreDosFechas');
   $group->get('/uno/{id}', \RegistroController::class . ':TraerUno');
 })->add(\Logger::class . ':VerificarAdmin')->add(\MiddlewareJWT::class . ':ValidarTokenMiembros');
 
@@ -190,6 +192,8 @@ $app->group('/csv', function (RouteCollectorProxy $group) {
   $group->post('/empleados', \EmpleadoController::class . ':ImportarCsv');
   $group->get('/admins', \AdminController::class . ':CrearCsv');//http://localhost:777/csv/admins en navegador para descargar csv
   $group->post('/admins', \AdminController::class . ':ImportarCsv');
+  $group->get('/registros', \RegistroController::class . ':CrearCsv');//http://localhost:777/csv/admins en navegador para descargar csv
+  $group->post('/registros', \RegistroController::class . ':ImportarCsv');
 })->add(function ($request, $handler) {
   $response = $handler->handle($request);
   return $response

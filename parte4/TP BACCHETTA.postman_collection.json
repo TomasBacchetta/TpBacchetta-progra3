@@ -1198,6 +1198,26 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Importar registros",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:777/csv/registros",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "777",
+							"path": [
+								"csv",
+								"registros"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1346,8 +1366,112 @@
 				{
 					"name": "Obtener por empleado",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NTYyMjU0MjMsImF1ZCI6ImFkOTRkNGJmN2MyODBjYWVmZjg3YzZmOGU2MzBhMzMwMzNkODgxNTkiLCJwdWVzdG8iOiJhZG1pbiIsImlkIjo5OTksImFwcCI6IlRlc3QgSldUIn0.oWgHVfwVChC6Yd-LN7o6eFiLqgfMNhquS0wE6Gql_GA",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "http://localhost:777/registros/porEmpleado?nombre=Tomi_Cocinero",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "777",
+							"path": [
+								"registros",
+								"porEmpleado"
+							],
+							"query": [
+								{
+									"key": "nombre",
+									"value": "Tomi_Cocinero"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener entre dos fechas",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NTYyMjU0MjMsImF1ZCI6ImFkOTRkNGJmN2MyODBjYWVmZjg3YzZmOGU2MzBhMzMwMzNkODgxNTkiLCJwdWVzdG8iOiJhZG1pbiIsImlkIjo5OTksImFwcCI6IlRlc3QgSldUIn0.oWgHVfwVChC6Yd-LN7o6eFiLqgfMNhquS0wE6Gql_GA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:777/registros/entreDosfechas?desde=20-06-2022&hasta=26-06-2022",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "777",
+							"path": [
+								"registros",
+								"entreDosfechas"
+							],
+							"query": [
+								{
+									"key": "desde",
+									"value": "20-06-2022"
+								},
+								{
+									"key": "hasta",
+									"value": "26-06-2022"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Traer por fecha",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NTYyMjU0MjMsImF1ZCI6ImFkOTRkNGJmN2MyODBjYWVmZjg3YzZmOGU2MzBhMzMwMzNkODgxNTkiLCJwdWVzdG8iOiJhZG1pbiIsImlkIjo5OTksImFwcCI6IlRlc3QgSldUIn0.oWgHVfwVChC6Yd-LN7o6eFiLqgfMNhquS0wE6Gql_GA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:777/registros/enUnaFecha?fecha=25-06-2022",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "777",
+							"path": [
+								"registros",
+								"enUnaFecha"
+							],
+							"query": [
+								{
+									"key": "fecha",
+									"value": "25-06-2022"
+								}
+							]
+						}
 					},
 					"response": []
 				}

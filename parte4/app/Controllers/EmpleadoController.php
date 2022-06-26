@@ -173,7 +173,7 @@ class EmpleadoController {
             } else {
                 
                 $empleado = empleado::where("id", $array[0])->withTrashed()->first();
-                if ((!isset($empleado->deleted_at) || $empleado->deleted_at != '') &&
+                if (count($array) == 9 && (!isset($empleado->deleted_at) || $empleado->deleted_at != '') &&
                     ($array[8] == null || $array[8] == '')){
                     $empleado->deleted_at = null;
                 }
