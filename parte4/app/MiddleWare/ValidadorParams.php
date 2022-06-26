@@ -428,7 +428,8 @@ class ValidadorParams {
         $response = new Response();
         
         if (pedido::existePedido_PorId($pedido_id)){
-            if (pedido::where("id", $pedido_id)->first()->estado != "Servido"){
+            if (pedido::where("id", $pedido_id)->first()->estado != "Servido" &&
+            pedido::where("id", $pedido_id)->first()->estado != "Pagado"){
                 $payload = json_encode(array("Mensaje" => "El pedido no esta servido aun"));
                 $response->getBody()->write($payload);
                 return $response->withStatus(403); 
@@ -458,7 +459,8 @@ class ValidadorParams {
             return $response->withStatus(403);
         }
 
-        if (mesa::where("id", $mesa_id)->first()->estado != "Cerrada"){
+        if (mesa::where("id", $mesa_id)->first()->estado != "Con cliente pagando" &&
+            mesa::where("id", $mesa_id)->first()->estado != "Cerrada"){
             $payload = json_encode(array("Mensaje" => "Aun no puede realizarse la encuesta"));
             $response->getBody()->write($payload);
             return $response->withStatus(403);
@@ -496,8 +498,8 @@ class ValidadorParams {
 
         }
 
-        if (strlen($dato["comentario"]) < 20){
-            $payload = json_encode(array("Mensaje" => "Comentario demasiado corto (Por lo menos 20 caracteres)"));
+        if (strlen($dato["comentario"]) < 10){
+            $payload = json_encode(array("Mensaje" => "Comentario demasiado corto (Por lo menos 10 caracteres)"));
             $response->getBody()->write($payload);
             return $response->withStatus(403);
         }

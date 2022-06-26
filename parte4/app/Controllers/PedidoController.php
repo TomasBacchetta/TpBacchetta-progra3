@@ -238,50 +238,7 @@ class PedidoController {
         return $response->withHeader("Content-Type", "application/json");
     }
 
-    /*
-    public function CrearPDF($request, $response, $args){
-        $id = $args["id"];
-        $pedido = pedido::where("id", $id)->first();
-        $ordenes = orden::where("pedido_id", $id)->get();
-        $mozo = empleado::where("id", $pedido->mozo_id)->first();
-
-        $textoOrdenes = "<dl>";
-
-        foreach ($ordenes as $eOrden){
-            $producto = producto::where("id", $eOrden->producto_id)->first();
-            $textoOrdenes .= '<dt> x' . $eOrden->cantidad . ' ' . $producto->descripcion . '-------$' . $producto->precio . '</dt>';
-            $textoOrdenes .= '<dd>Subtotal: $' . $eOrden->subtotal . '</dd>';
-        }
-
-        $textoOrdenes .= "</dl>";
-
-
-        
-        $pdf = new TCPDF('P', 'mm', 'A5', true, 'UTF-8', false, true);
     
-        $pdf->addPage();
-        $texto = '<img src="./logo/logo.png" alt="test alt attribute" width="60" height="60" border="0" />
-                    <h1>Factura</h1> <br>
-                    Fecha: ' . date("y-m-d") . '<br>
-                    Pedido N°: ' . $id . '<br>
-                    Mesa N°: ' . $pedido->mesa_id .'<br> 
-                    Mozo: ' . $mozo->nombre .'<br> 
-                    <ol>
-                        
-                        
-                        
-                    ' . $textoOrdenes . '<br><br> Total:$' . $pedido->total;
-                    $pdf->writeHTML($texto, true, false, true, false, '');
-
-        
-        ob_end_clean();
-        $pdf->Output($id . '.pdf', 'I');
-        
-        return $response->withHeader("Content-Type", "application/pdf");
-    
-    }
-    */
-
     public function CrearPDF($request, $response, $args){
         $id = $args["id"];
         

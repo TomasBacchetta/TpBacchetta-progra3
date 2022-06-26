@@ -24,6 +24,7 @@ namespace App\Models;
 use \Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use TCPDF;
+use Illuminate\Database\Capsule\Manager as Capsule;
 
 class pedido extends Model{
    
@@ -114,6 +115,20 @@ class pedido extends Model{
             }
         }
         return false;
+    }
+
+    public static function MesaDelPedidoEstaCerrada($pedido_id){
+        $mesa = Capsule::table('mesas')
+        ->join('pedidos', 'pedidos.mesa_id', '=', 'mesas.id')
+        ->select('mesas.*')
+        ->where('mesas.estado', "Cerrada")->first();
+
+        if (isset($mesa)){
+            return true;
+        } else {
+            return false;
+        }
+        
     }
 
     public static function CrearFacturaPDF($id){

@@ -13,6 +13,9 @@ use \App\Models\producto as producto;
 use \App\Models\pedido as pedido;
 use GuzzleHttp\Psr7\Stream;
 use \App\Models\registro as registro;
+use Illuminate\Support\Facades\Date;
+
+require_once "./Models/time.php";
 
 class OrdenController {
 
@@ -154,8 +157,6 @@ class OrdenController {
         $ordenModificada->estado = $param["estado"];
         
 
-        $ordenModificada->save();
-
         $pedido_id = orden::where("id", $id)->value("pedido_id");
 
         if ($ordenModificada->estado == "En preparacion"){
@@ -195,14 +196,19 @@ class OrdenController {
                 $pedido = pedido::where("id", $pedido_id)->first();
                 registro::CrearRegistro(AutentificadorJWT::ObtenerId($token), "Termino la orden n°" . $id . ", que es la ultima que faltaba del pedido n°" . pedido::where("id", $pedido_id)->first()->id);
                 $pedido->estado = "Listo para servir";
+                if (Time::DiferenciaEntreTimestamps($ordenModificada->updated_at, Date::now()->subHours(3)) > Time::StringToSeconds($pedido->tiempo_estimado)){
+                    $pedido->con_retraso = "SI";
+                }
                 $pedido->save();
             }
+
+            $ordenModificada->save();
             
         }
 
         
         
-
+        
 
         $payload = json_encode(array("mensaje" => "Estado de la orden cambiado a " . $param["estado"]));
 

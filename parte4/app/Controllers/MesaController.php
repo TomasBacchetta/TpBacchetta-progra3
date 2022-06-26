@@ -82,8 +82,11 @@ class MesaController {
 
         if ($estado == "Cerrada"){
             $pedido = pedido::where("mesa_id", $id)->where("estado", "Servido")->first();
-            $pedido->estado = "Pagado";
-            $pedido->save();
+            if (isset($pedido)){
+                $pedido->estado = "Pagado";
+                $pedido->save();
+            }
+           
         }
         
 

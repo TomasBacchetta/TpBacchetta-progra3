@@ -7,6 +7,7 @@ use \App\Models\pedido as pedido;
 use \App\Models\registro as registro;
 use \App\Models\empleado as empleado;
 use \App\Models\encuesta as encuesta;
+use App\Models\orden;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 
@@ -33,7 +34,8 @@ class estadisticas {
         $mesaMenosUsada = self::ObtenerMesaMenosUsadaEnTreintaDias();
         $mesaMasFacturo = self::ObtenerMesaQueMasFacturoEnTreintaDias();
         $mesaMenosFacturo = self::ObtenerMesaQueMenosFacturoEnTreintaDias();
-
+        
+        
         $puntuacionRestaurante = 
         $texto = '<img src="./logo/logo.png" alt="test alt attribute" width="60" height="60" border="0" />
                     <h1>Estadisticas historicas</h1> <br>
@@ -46,7 +48,11 @@ class estadisticas {
                     La mesa mas usada fue la N°: ' . $mesaMasUsada[0]  . ', usada ' . $mesaMasUsada[1]  . ' veces <br>
                     La mesa menos usada fue la N°: ' . $mesaMenosUsada[0]  . ', usada ' . $mesaMenosUsada[1]  . ' veces <br>
                     La mesa que mas facturo fue la N°: ' . $mesaMasFacturo[0] . ' ,por un monto de $' . $mesaMasFacturo[1] . '<br>
-                    La mesa que menos facturo fue la N°: ' . $mesaMenosFacturo[0] . ' ,por un monto de $' . $mesaMenosFacturo[1] . '<br> <br> 
+                    La mesa que menos facturo fue la N°: ' . $mesaMenosFacturo[0] . ' ,por un monto de $' . $mesaMenosFacturo[1] . '<br> 
+                    Se hicieron  ' . self::CantidadDePedidosEn30Dias() . ' pedidos <br>
+                    Hubo ' . self::CantidadDePedidosConRetrasoEn30Dias() . ' pedidos con retraso <br> 
+                    El producto mas popular fue:  ' . self::ProductoQueMasSeVendio(). '  <br> 
+                    El producto menos popular fue:  ' . self::ProductoQueMasSeVendio(). '  <br> <br>
                     Mesa/s con mayor importe: <br> 
                     ' . self::ObtenerMesasConFacturaDeMayorImporte() . ' <br> <br> 
                     Mesa/s con menor importe: <br> 
@@ -56,6 +62,25 @@ class estadisticas {
         return self::CrearPDF($texto);
     }
 
+    public static function CantidadDePedidosEn30Dias(){
+        $fechaActual = Date::now()->subHours(3);
+        $fechaMesAtras = Date::now()->subHours(3)->subDays(30);
+
+        return pedido::whereBetween('created_at', [$fechaMesAtras, $fechaActual])
+        ->where("estado", "Pagado")->count();
+    }
+
+
+    public static function CantidadDePedidosConRetrasoEn30Dias(){
+        $fechaActual = Date::now()->subHours(3);
+        $fechaMesAtras = Date::now()->subHours(3)->subDays(30);
+
+        return pedido::where("con_retraso", "SI")
+        ->whereBetween('created_at', [$fechaMesAtras, $fechaActual])
+        ->where("estado", "Pagado")->count();
+        
+    }
+
     /*
     MAS COSAS PARA EL PDF:
     La mesa que tuvo el pedido con el mayor importe fue la N°' . NMESA . 'por $' . IMPORTE .'
@@ -63,19 +88,9 @@ class estadisticas {
     Se facturaron $'. FACTURACIONATREINTADIAS .'
 
     */
-    /*
-    public static function ImprimirMejoresComentarios(){
-        $mejoresComentarios = "<dl>";
+    
+    
 
-        foreach ($ordenes as $eOrden){
-            $producto = producto::where("id", $eOrden->producto_id)->first();
-            $textoOrdenes .= '<dt> x' . $eOrden->cantidad . ' ' . $producto->descripcion . '-------$' . $producto->precio . '</dt>';
-            $textoOrdenes .= '<dd>Subtotal: $' . $eOrden->subtotal . '</dd>';
-        }
-
-        $textoOrdenes .= "</dl>";
-    }
-*/
     public static function ObtenerMesasConFacturaDeMayorImporte(){
         $mesas = self::ObtenerFacturasMasCostosasEnTreintaDias();
         $texto = "";
@@ -180,8 +195,12 @@ class estadisticas {
     public static function ObtenerFacturasMasCostosasEnTreintaDias(){
         $fechaActual = Date::now()->subHours(3);
         $fechaMesAtras = Date::now()->subHours(3)->subDays(30);
-        $pedidos = pedido::whereBetween('created_at', [$fechaMesAtras, $fechaActual])->get();
-        $mayor = pedido::whereBetween('created_at', [$fechaMesAtras, $fechaActual])->max("total");
+        $pedidos = pedido::whereBetween('created_at', [$fechaMesAtras, $fechaActual])
+        ->where("estado", "Pagado")
+        ->get();
+        $mayor = pedido::whereBetween('created_at', [$fechaMesAtras, $fechaActual])
+        ->where("estado", "Pagado")
+        ->max("total");
         $mesas = array();
 
 
@@ -198,8 +217,12 @@ class estadisticas {
     public static function ObtenerFacturasMenosCostosasEnTreintaDias(){
         $fechaActual = Date::now()->subHours(3);
         $fechaMesAtras = Date::now()->subHours(3)->subDays(30);
-        $pedidos = pedido::whereBetween('created_at', [$fechaMesAtras, $fechaActual])->get();
-        $minimo = pedido::whereBetween('created_at', [$fechaMesAtras, $fechaActual])->min("total");
+        $pedidos = pedido::whereBetween('created_at', [$fechaMesAtras, $fechaActual])
+        ->where("estado", "Pagado")
+        ->get();
+        $minimo = pedido::whereBetween('created_at', [$fechaMesAtras, $fechaActual])
+        ->where("estado", "Pagado")
+        ->min("total");
         $mesas = array();
 
         foreach ($pedidos as $ePedido){
@@ -211,6 +234,47 @@ class estadisticas {
         return $mesas;
     }
 
+    public static function ProductoQueMasSeVendio(){
+        $fechaActual = Date::now()->subHours(3);
+        $fechaMesAtras = Date::now()->subHours(3)->subDays(30);
+        $productoQueMasSeVendio = "Ninguno";
+
+        $productoQueMasSeVendio = orden::select('descripcion')
+        ->whereBetween('created_at', [$fechaMesAtras, $fechaActual])
+        ->groupBy('descripcion')
+        ->orderByRaw('COUNT(*) DESC')
+        ->take(1)
+        ->value('descripcion');
+
+
+        return $productoQueMasSeVendio;
+    }
+
+    public static function ProductoQueMenosSeVendio(){
+        $fechaActual = Date::now()->subHours(3);
+        $fechaMesAtras = Date::now()->subHours(3)->subDays(30);
+        $productoQueMenosSeVendio = orden::select('descripcion')
+        ->whereBetween('created_at', [$fechaMesAtras, $fechaActual])
+        ->groupBy('descripcion')
+        ->orderByRaw('COUNT(*) ASC')
+        ->take(-1)
+        ->value('descripcion');
+
+        return $productoQueMenosSeVendio;
+    }
+
+    public static function ObtenerFacturadoEntreDosFechas($desde, $hasta){
+        $desde = time::StrFechaToTimestamp($desde);
+        $hasta = time::StrFechaToTimestamp($hasta);
+        var_dump($desde);
+        $facturado = pedido::where("estado", "Pagado")
+        ->whereBetween('created_at', [$desde, $hasta])
+        ->sum("total");
+
+        return $facturado;
+    }
+
+    
     
     
 }

@@ -86,7 +86,7 @@ class empleado extends Model{
         ->join('ordens', 'ordens.empleado_id', '=', 'empleados.id')
         ->join('pedidos', 'pedidos.id', '=', 'ordens.pedido_id')
         ->select('empleados.*')
-        ->where('pedidos.id', $pedido_id)->withTrashed()->get();
+        ->where('pedidos.id', $pedido_id)->where("empleados.deleted_at", null)->orWhere("empleados.deleted_at", "!=", null)->get();
 
         return $empleados->unique('id');
 

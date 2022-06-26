@@ -16,7 +16,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NTUyMzUwMzEsImV4cCI6MTY1NTI5NTAzMSwiYXVkIjoiYWQ5NGQ0YmY3YzI4MGNhZWZmODdjNmY4ZTYzMGEzMzAzM2Q4ODE1OSIsInB1ZXN0byI6ImFkbWluIiwiaWQiOjk5OSwiYXBwIjoiVGVzdCBKV1QifQ.uYkYKOc7hFLi0F7TrydZ8QYULWXWDdOgn00jap1vdhE",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NTU4NTM3MzEsImF1ZCI6ImFkOTRkNGJmN2MyODBjYWVmZjg3YzZmOGU2MzBhMzMwMzNkODgxNTkiLCJwdWVzdG8iOiJhZG1pbiIsImlkIjo5OTksImFwcCI6IlRlc3QgSldUIn0.kc9tFUHaGqxYNjzpeHX1L9wZdU-mpBqFkwa0RUxu5GE",
 									"type": "string"
 								}
 							]
@@ -28,7 +28,7 @@
 							"formdata": [
 								{
 									"key": "nombre",
-									"value": "Tomi_Bartender",
+									"value": "Tomi_Bartender2",
 									"type": "default"
 								},
 								{
@@ -70,7 +70,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NTUyMzUwMzEsImV4cCI6MTY1NTI5NTAzMSwiYXVkIjoiYWQ5NGQ0YmY3YzI4MGNhZWZmODdjNmY4ZTYzMGEzMzAzM2Q4ODE1OSIsInB1ZXN0byI6ImFkbWluIiwiaWQiOjk5OSwiYXBwIjoiVGVzdCBKV1QifQ.uYkYKOc7hFLi0F7TrydZ8QYULWXWDdOgn00jap1vdhE",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NTU4NjQ1NzIsImF1ZCI6ImFkOTRkNGJmN2MyODBjYWVmZjg3YzZmOGU2MzBhMzMwMzNkODgxNTkiLCJwdWVzdG8iOiJhZG1pbiIsImlkIjo5OTksImFwcCI6IlRlc3QgSldUIn0.8CHY2QO2skaaQofMld0HvnGx2QW5WhXWNIIq_YKmyl0",
 									"type": "string"
 								}
 							]
@@ -125,6 +125,14 @@
 								"17"
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cambiar estado empleado",
+					"request": {
+						"method": "GET",
+						"header": []
 					},
 					"response": []
 				}
@@ -586,6 +594,16 @@
 				{
 					"name": "Listar pedidos",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NTU1OTU1OTQsImF1ZCI6ImFkOTRkNGJmN2MyODBjYWVmZjg3YzZmOGU2MzBhMzMwMzNkODgxNTkiLCJwdWVzdG8iOiJhZG1pbiIsImlkIjo5OTksImFwcCI6IlRlc3QgSldUIn0.mLjHggPgOkLMwfvjE8ujeZIEhoO-77bR5thcwjOzczk",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -998,10 +1016,18 @@
 			]
 		},
 		{
-			"name": "Login clientes",
+			"name": "Clientes",
 			"item": [
 				{
 					"name": "Login cliente",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Consultar estado del pedido",
 					"request": {
 						"method": "GET",
 						"header": []
@@ -1195,6 +1221,154 @@
 								"3"
 							]
 						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Encuestas",
+			"item": [
+				{
+					"name": "Cargar encuesta",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NTYyMTcyMTUsImF1ZCI6ImFkOTRkNGJmN2MyODBjYWVmZjg3YzZmOGU2MzBhMzMwMzNkODgxNTkiLCJtZXNhX2lkIjoiMTAwMDMiLCJwZWRpZG9faWQiOiI3NSIsImFwcCI6IlRlc3QgSldUIn0.mRES0jsZiyH9t16R4c0qi2s3kRcNyltC_JfH6G6ybos",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "calificacion_mesa",
+									"value": "7",
+									"type": "default"
+								},
+								{
+									"key": "calificacion_restaurante",
+									"value": "4",
+									"type": "default"
+								},
+								{
+									"key": "calificacion_mozo",
+									"value": "5",
+									"type": "default"
+								},
+								{
+									"key": "calificacion_cocinero",
+									"value": "3",
+									"type": "default"
+								},
+								{
+									"key": "calificacion_cervecero",
+									"value": "8",
+									"type": "default"
+								},
+								{
+									"key": "calificacion_bartender",
+									"value": "6",
+									"type": "default"
+								},
+								{
+									"key": "comentario",
+									"value": "Muy rica la mila",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:777/encuestas",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "777",
+							"path": [
+								"encuestas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener encuestas",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Mejores tres encuestas",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Peores tres encuestas",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Registros",
+			"item": [
+				{
+					"name": "Obtener todos",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener uno",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener por empleado",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Estadisticas",
+			"item": [
+				{
+					"name": "Obtener estadistica general",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Facturado entre dos fechas",
+					"request": {
+						"method": "GET",
+						"header": []
 					},
 					"response": []
 				}

@@ -143,8 +143,9 @@ $app->group("/ordenes", function (RouteCollectorProxy $group){
 })->add(\MiddleWareJWT::class . ':ValidarTokenMiembros');
 
 $app->group("/encuestas", function (RouteCollectorProxy $group){
-  $group->get('[/]', \EncuestaController::class . ':TraerTodos')->add(\Logger::class . ':VerificarAdmin')->add(\MiddlewareJWT::class . ':ValidarTokenMiembros');
-  $group->get('/puntaje_restaurante', \EncuestaController::class . ':TraerPuntajeRestaurante')->add(\Logger::class . ':VerificarAdmin')->add(\MiddlewareJWT::class . ':ValidarTokenMiembros');
+  $group->get('/todas', \EncuestaController::class . ':TraerTodos')->add(\Logger::class . ':VerificarAdmin')->add(\MiddlewareJWT::class . ':ValidarTokenMiembros');
+  $group->get('/mejorestres', \EncuestaController::class . ':TraerMejoresTres')->add(\Logger::class . ':VerificarAdmin')->add(\MiddlewareJWT::class . ':ValidarTokenMiembros');
+  $group->get('/peorestres', \EncuestaController::class . ':TraerPeoresTres')->add(\Logger::class . ':VerificarAdmin')->add(\MiddlewareJWT::class . ':ValidarTokenMiembros');
   $group->post('[/]', \EncuestaController::class . ':CargarUno')->add(\ValidadorParams::class . ':ValidarParamsEncuestas')->add(\MiddleWareJWT::class . ':ValidarTokenClientes');
   $group->delete('/{id}', \EncuestaController::class . ':BorrarUno')->add(\Logger::class . ':VerificarAdmin')->add(\MiddlewareJWT::class . ':ValidarTokenMiembros');
 });
@@ -167,6 +168,7 @@ $app->group('/clientes', function (RouteCollectorProxy $group) {
 
 $app->group('/estadisticas', function (RouteCollectorProxy $group) {
   $group->get('/general', \EstadisticasController::class . ':MostrarEstadisticaGeneral');
+  $group->get('/facturadoentredosfechas', \EstadisticasController::class . ':MostrarFacturadoEntreDosFechas'); 
 })->add(\Logger::class . ':VerificarAdmin')->add(\MiddlewareJWT::class . ':ValidarTokenMiembros');
 
 

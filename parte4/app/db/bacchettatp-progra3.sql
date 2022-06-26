@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 25-06-2022 a las 09:37:03
+-- Tiempo de generación: 26-06-2022 a las 07:30:04
 -- Versión del servidor: 10.4.24-MariaDB
 -- Versión de PHP: 8.1.4
 
@@ -68,8 +68,8 @@ CREATE TABLE `empleados` (
 --
 
 INSERT INTO `empleados` (`id`, `nombre`, `clave`, `puesto`, `puntaje`, `estado`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(38, 'Tomi_Cocinero', 1234, 'Cocinero', 10, 'Activo', '2022-06-25 00:14:08.425489', '2022-06-25 02:14:08.000000', NULL),
-(39, 'Tomi_Mozo', 1234, 'Mozo', 9, 'Activo', '2022-06-23 01:09:56.301283', '2022-06-23 06:09:56.000000', NULL),
+(38, 'Tomi_Cocinero', 1234, 'Cocinero', 6.5, 'Activo', '2022-06-26 04:23:18.464808', '2022-06-26 06:23:18.000000', NULL),
+(39, 'Tomi_Mozo', 1234, 'Mozo', 5, 'Activo', '2022-06-26 03:55:18.797360', '2022-06-26 05:55:18.000000', NULL),
 (40, 'Tomi_Cervecero', 1234, 'Cervecero', 0, 'Activo', '2022-06-22 04:26:04.000000', '2022-06-22 04:26:04.000000', NULL),
 (41, 'Tomi_Bartender', 1234, 'Bartender', 8, 'Activo', '2022-06-22 02:01:47.417071', '2022-06-22 07:01:47.000000', NULL),
 (42, 'Tomi_Bartender2', 1234, 'Bartender', 6.5, 'Activo', '2022-06-23 01:12:34.146062', '2022-06-23 06:12:34.000000', NULL);
@@ -100,9 +100,9 @@ CREATE TABLE `encuestas` (
 --
 
 INSERT INTO `encuestas` (`id`, `pedido_id`, `calificacion_mesa`, `calificacion_restaurante`, `calificacion_mozo`, `calificacion_cocinero`, `calificacion_cervecero`, `calificacion_bartender`, `comentario`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(41, 45, 7, 6, 9, 0, 0, 7, 'Me gusto la atencion. Me gusto la comida. Muy lind', '2022-06-23 06:09:56.000000', '2022-06-23 06:09:56.000000', NULL),
-(42, 46, 7, 6, 9, 0, 0, 6, 'Me gusto la atencion. Me gusto la comida. Muy lind', '2022-06-23 06:12:34.000000', '2022-06-23 06:12:34.000000', NULL),
-(45, 60, 7, 6, 9, 10, 8, 6, 'Me gusto la atencion. Me gusto la comida. Muy lind', '2022-06-25 02:16:34.000000', '2022-06-25 02:16:34.000000', NULL);
+(45, 60, 7, 6, 9, 10, 8, 6, 'Me gusto la atencion. Me gusto la comida. Muy lind', '2022-06-25 02:16:34.000000', '2022-06-25 02:16:34.000000', NULL),
+(50, 66, 7, 4, 5, 3, 8, 6, 'El pedido tardo mucho', '2022-06-26 05:55:18.000000', '2022-06-26 05:55:18.000000', NULL),
+(51, 75, 8, 9, 5, 10, 8, 6, 'Muy rica la mila', '2022-06-26 06:23:18.000000', '2022-06-26 06:23:18.000000', NULL);
 
 -- --------------------------------------------------------
 
@@ -124,8 +124,8 @@ CREATE TABLE `mesas` (
 --
 
 INSERT INTO `mesas` (`id`, `estado`, `puntaje`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(10003, 'Con cliente esperando pedido', 0, '2022-06-22 05:05:07.000000', '2022-06-25 06:46:32.000000', NULL),
-(10004, 'Con cliente esperando pedido', 0, '2022-06-22 05:05:15.000000', '2022-06-25 08:07:25.000000', NULL);
+(10003, 'Cerrada', 0, '2022-06-22 05:05:07.000000', '2022-06-26 05:56:27.000000', NULL),
+(10004, 'Cerrada', 0, '2022-06-22 05:05:15.000000', '2022-06-26 06:16:18.000000', NULL);
 
 -- --------------------------------------------------------
 
@@ -153,7 +153,8 @@ CREATE TABLE `ordens` (
 --
 
 INSERT INTO `ordens` (`id`, `pedido_id`, `producto_id`, `empleado_id`, `descripcion`, `cantidad`, `subtotal`, `tiempo_estimado`, `estado`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(95, 66, 13, 0, 'Torta', 1, 200, '00:05:00', 'Abierta', '2022-06-25 08:19:23.000000', '2022-06-25 08:19:23.000000', NULL);
+(95, 66, 13, 38, 'Torta', 1, 200, '00:07:00', 'Listo para servir', '2022-06-25 08:19:23.000000', '2022-06-24 05:18:40.000000', NULL),
+(96, 75, 18, 38, 'Milanesa Napolitana', 3, 1800, '00:06:00', 'Listo para servir', '2022-06-26 06:07:44.000000', '2022-06-26 06:13:43.000000', NULL);
 
 -- --------------------------------------------------------
 
@@ -180,15 +181,8 @@ CREATE TABLE `pedidos` (
 --
 
 INSERT INTO `pedidos` (`id`, `mesa_id`, `mozo_id`, `total`, `tiempo_estimado`, `estado`, `foto_mesa`, `con_retraso`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(66, 10003, 39, 200, '00:05:00', 'Con orden', 'FotosMesas/66@10003-mesa.jpg', 'NO', '2022-06-25 03:00:00.000000', '2022-06-25 08:19:23.000000', NULL),
-(67, 10003, 39, 0, '', 'Abierto', 'FotosMesas/67@10003-mesa.jpg', 'NO', '2022-06-25 03:00:00.000000', '2022-06-25 06:59:49.000000', NULL),
-(68, 10003, 39, 0, '', 'Abierto', 'FotosMesas/68@10003-mesa.jpg', 'NO', '2022-06-25 03:00:00.000000', '2022-06-25 07:10:15.000000', NULL),
-(69, 10003, 39, 0, '', 'Abierto', 'FotosMesas/69@10003-mesa.jpg', 'NO', '2022-06-25 03:00:00.000000', '2022-06-25 05:12:16.000000', NULL),
-(70, 10003, 39, 0, '', 'Abierto', 'FotosMesas/70@10003-mesa.jpg', 'NO', '2022-06-25 03:00:00.000000', '2022-06-25 07:13:07.000000', NULL),
-(71, 10003, 39, 0, '', 'Abierto', 'FotosMesas/71@10003-mesa.jpg', 'NO', '2022-06-25 07:13:50.000000', '2022-06-25 07:13:50.000000', NULL),
-(72, 10003, 39, 0, '', 'Abierto', 'FotosMesas/72@10003-mesa.jpg', 'NO', '2022-06-25 07:14:39.000000', '2022-06-25 07:14:39.000000', NULL),
-(73, 10003, 39, 0, '', 'Abierto', 'FotosMesas/73@10003-mesa.jpg', 'NO', '2022-06-25 07:20:57.000000', '2022-06-25 07:20:57.000000', NULL),
-(74, 10004, 39, 0, '', 'Abierto', 'FotosMesas/74@10004-mesa.jpg', 'NO', '2022-06-25 08:07:25.000000', '2022-06-25 08:07:25.000000', NULL);
+(66, 10003, 39, 200, '00:07:00', 'Pagado', 'FotosMesas/66@10003-mesa.jpg', 'SI', '2022-06-25 03:00:00.000000', '2022-06-26 05:56:27.000000', NULL),
+(75, 10004, 39, 1800, '00:06:00', 'Pagado', 'FotosMesas/75@10004-mesa.jpg', 'NO', '2022-06-19 06:04:19.000000', '2022-06-19 06:16:18.000000', NULL);
 
 -- --------------------------------------------------------
 
@@ -216,7 +210,8 @@ INSERT INTO `productos` (`id`, `descripcion`, `precio`, `stock`, `sector`, `tiem
 (11, 'Cerveza', 200, 85, 'Barra_Choperas', '00:05:00', '2022-06-13 05:14:22.000000', '2022-06-15 03:38:48.000000', NULL),
 (12, 'Coca-Cola 600ml', 200, 84, 'Cocina', '00:05:00', '2022-06-13 07:58:55.000000', '2022-06-25 00:36:58.000000', NULL),
 (13, 'Torta', 200, 73, 'Candy_Bar', '00:05:00', '2022-06-13 08:01:32.000000', '2022-06-25 08:19:23.000000', NULL),
-(17, 'Daikiri', 200, 74, 'Barra_Tragos', '00:05:00', '2022-06-14 00:09:30.000000', '2022-06-25 00:18:08.000000', NULL);
+(17, 'Daikiri', 200, 74, 'Barra_Tragos', '00:05:00', '2022-06-14 00:09:30.000000', '2022-06-25 00:18:08.000000', NULL),
+(18, 'Milanesa Napolitana', 600, 37, 'Cocina', '00:05:00', '2022-06-26 06:05:22.000000', '2022-06-26 06:07:44.000000', NULL);
 
 -- --------------------------------------------------------
 
@@ -284,7 +279,39 @@ INSERT INTO `registros` (`id`, `empleado`, `puesto`, `descripcion`, `created_at`
 (43, 'Tomi_Mozo', 'Mozo', 'Creo pedido', '2022-06-25 07:14:39.000000', '2022-06-25 07:14:39.000000', NULL),
 (44, 'Tomi_Mozo', 'Mozo', 'Creo pedido', '2022-06-25 07:20:57.000000', '2022-06-25 07:20:57.000000', NULL),
 (45, 'Tomi_Mozo', 'Mozo', 'Creo pedido', '2022-06-25 08:07:25.000000', '2022-06-25 08:07:25.000000', NULL),
-(46, 'Tomi_Mozo', 'Mozo', 'Agrego orden a un pedido', '2022-06-25 08:19:23.000000', '2022-06-25 08:19:23.000000', NULL);
+(46, 'Tomi_Mozo', 'Mozo', 'Agrego orden a un pedido', '2022-06-25 08:19:23.000000', '2022-06-25 08:19:23.000000', NULL),
+(47, 'Tomi_Cocinero', 'Cocinero', 'Login', '2022-06-26 04:57:26.000000', '2022-06-26 04:57:26.000000', NULL),
+(48, 'Tomi_Cocinero', 'Cocinero', 'Empezo a preparar la orden n°95, que es la ultima del pedido n°66', '2022-06-26 04:59:28.000000', '2022-06-26 04:59:28.000000', NULL),
+(49, 'Tomi_Cocinero', 'Cocinero', 'Termino la orden n°95del pedido n°66', '2022-06-26 05:18:40.000000', '2022-06-26 05:18:40.000000', NULL),
+(50, 'Tomi_Cocinero', 'Cocinero', 'Termino la orden n°95, que es la ultima que faltaba del pedido n°66', '2022-06-26 05:18:40.000000', '2022-06-26 05:18:40.000000', NULL),
+(51, 'Tomi_Cocinero', 'Cocinero', 'Termino la orden n°95del pedido n°66', '2022-06-26 05:19:21.000000', '2022-06-26 05:19:21.000000', NULL),
+(52, 'Tomi_Cocinero', 'Cocinero', 'Termino la orden n°95, que es la ultima que faltaba del pedido n°66', '2022-06-26 05:19:21.000000', '2022-06-26 05:19:21.000000', NULL),
+(53, 'Tomi_Cocinero', 'Cocinero', 'Termino la orden n°95del pedido n°66', '2022-06-26 05:20:43.000000', '2022-06-26 05:20:43.000000', NULL),
+(54, 'Tomi_Cocinero', 'Cocinero', 'Termino la orden n°95, que es la ultima que faltaba del pedido n°66', '2022-06-26 05:20:43.000000', '2022-06-26 05:20:43.000000', NULL),
+(55, 'Tomi_Cocinero', 'Cocinero', 'Termino la orden n°95del pedido n°66', '2022-06-26 05:22:00.000000', '2022-06-26 05:22:00.000000', NULL),
+(56, 'Tomi_Cocinero', 'Cocinero', 'Termino la orden n°95, que es la ultima que faltaba del pedido n°66', '2022-06-26 05:22:00.000000', '2022-06-26 05:22:00.000000', NULL),
+(57, 'Tomi_Cocinero', 'Cocinero', 'Termino la orden n°95del pedido n°66', '2022-06-26 05:24:10.000000', '2022-06-26 05:24:10.000000', NULL),
+(58, 'Tomi_Cocinero', 'Cocinero', 'Termino la orden n°95, que es la ultima que faltaba del pedido n°66', '2022-06-26 05:24:10.000000', '2022-06-26 05:24:10.000000', NULL),
+(59, 'Tomi_Cocinero', 'Cocinero', 'Termino la orden n°95del pedido n°66', '2022-06-26 05:24:39.000000', '2022-06-26 05:24:39.000000', NULL),
+(60, 'Tomi_Cocinero', 'Cocinero', 'Termino la orden n°95, que es la ultima que faltaba del pedido n°66', '2022-06-26 05:24:39.000000', '2022-06-26 05:24:39.000000', NULL),
+(61, 'Tomi_Cocinero', 'Cocinero', 'Termino la orden n°95del pedido n°66', '2022-06-26 05:25:01.000000', '2022-06-26 05:25:01.000000', NULL),
+(62, 'Tomi_Cocinero', 'Cocinero', 'Termino la orden n°95, que es la ultima que faltaba del pedido n°66', '2022-06-26 05:25:01.000000', '2022-06-26 05:25:01.000000', NULL),
+(63, 'Tomi_Mozo', 'Mozo', 'Login', '2022-06-26 05:29:48.000000', '2022-06-26 05:29:48.000000', NULL),
+(64, 'Tomi_Mozo', 'Mozo', 'Sirvio el pedido', '2022-06-26 05:29:57.000000', '2022-06-26 05:29:57.000000', NULL),
+(65, 'Tomi_Mozo', 'Mozo', 'Login', '2022-06-26 05:32:42.000000', '2022-06-26 05:32:42.000000', NULL),
+(66, 'Tomi_Mozo', 'Mozo', 'Cobro el pedido', '2022-06-26 05:32:59.000000', '2022-06-26 05:32:59.000000', NULL),
+(67, 'Tomi_Mozo', 'Mozo', 'Cobro el pedido', '2022-06-26 05:48:20.000000', '2022-06-26 05:48:20.000000', NULL),
+(68, 'Tomi_Mozo', 'Mozo', 'Creo pedido', '2022-06-26 06:04:19.000000', '2022-06-26 06:04:19.000000', NULL),
+(69, 'Tomi_Mozo', 'Mozo', 'Login', '2022-06-26 06:07:34.000000', '2022-06-26 06:07:34.000000', NULL),
+(70, 'Tomi_Mozo', 'Mozo', 'Agrego orden a un pedido', '2022-06-26 06:07:44.000000', '2022-06-26 06:07:44.000000', NULL),
+(71, 'Tomi_Bartender', 'Bartender', 'Login', '2022-06-26 06:08:47.000000', '2022-06-26 06:08:47.000000', NULL),
+(72, 'Tomi_Cocinero', 'Cocinero', 'Login', '2022-06-26 06:09:15.000000', '2022-06-26 06:09:15.000000', NULL),
+(73, 'Tomi_Cocinero', 'Cocinero', 'Empezo a preparar la orden n°96, que es la ultima del pedido n°75', '2022-06-26 06:13:28.000000', '2022-06-26 06:13:28.000000', NULL),
+(74, 'Tomi_Cocinero', 'Cocinero', 'Termino la orden n°96del pedido n°75', '2022-06-26 06:13:43.000000', '2022-06-26 06:13:43.000000', NULL),
+(75, 'Tomi_Cocinero', 'Cocinero', 'Termino la orden n°96, que es la ultima que faltaba del pedido n°75', '2022-06-26 06:13:43.000000', '2022-06-26 06:13:43.000000', NULL),
+(76, 'Tomi_Mozo', 'Mozo', 'Login', '2022-06-26 06:14:43.000000', '2022-06-26 06:14:43.000000', NULL),
+(77, 'Tomi_Mozo', 'Mozo', 'Sirvio el pedido', '2022-06-26 06:14:53.000000', '2022-06-26 06:14:53.000000', NULL),
+(78, 'Tomi_Mozo', 'Mozo', 'Cobro el pedido', '2022-06-26 06:15:44.000000', '2022-06-26 06:15:44.000000', NULL);
 
 --
 -- Índices para tablas volcadas
@@ -358,7 +385,7 @@ ALTER TABLE `empleados`
 -- AUTO_INCREMENT de la tabla `encuestas`
 --
 ALTER TABLE `encuestas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT de la tabla `mesas`
@@ -370,25 +397,25 @@ ALTER TABLE `mesas`
 -- AUTO_INCREMENT de la tabla `ordens`
 --
 ALTER TABLE `ordens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=96;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=97;
 
 --
 -- AUTO_INCREMENT de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `registros`
 --
 ALTER TABLE `registros`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

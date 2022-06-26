@@ -69,7 +69,7 @@ class EncuestaController {
 
     public function TraerTodos($request, $response, $args){
         $encuestas = encuesta::all();
-        $payload = json_encode(array("listaUsuario" => $encuestas));
+        $payload = json_encode(array("listaEncuestas" => $encuestas));
 
         $response->getBody()->write($payload);
 
@@ -77,39 +77,27 @@ class EncuestaController {
 
     }
 
-    public function ModificarUno($request, $response, $args){
-        $id = $args["id"];
-        $param = $request->getParsedBody();
-
-        $pedido_id = $param["pedido_id"];
-        $encuesta_mesa = $param["encuesta_mesa"];
-        $encuesta_restaurante = $param["encuesta_restaurante"];
-        $encuesta_mozo = $param["encuesta_mozo"];
-        $encuesta_cocinero = $param["encuesta_cocinero"];
-        $encuesta_cervecero = $param["encuesta_cervecero"];
-        $encuesta_bartender = $param["encuesta_bartender"];
-        $pedicomentariodo_id = $param["comentario"];
-
-        $encuestaAModificar = encuesta::where('id', $id)->first();
-        $encuestaAModificar->pedido_id = $pedido_id;
-        $encuestaAModificar->encuesta_mesa = $encuesta_mesa;
-        $encuestaAModificar->encuesta_restaurante = $encuesta_restaurante;
-        $encuestaAModificar->encuesta_mozo = $encuesta_mozo;
-        $encuestaAModificar->encuesta_cocinero = $encuesta_cocinero;
-        $encuestaAModificar->encuesta_cervecero = $encuesta_cervecero;
-        $encuestaAModificar->encuesta_bartender = $encuesta_bartender;
-        $encuestaAModificar->pedicomentariodo_id = $pedicomentariodo_id;
-
-        $encuestaAModificar->save();
-
-        $payload = json_encode(array("mensaje" => "Usuario modificado exitosamente"));
+    public function TraerMejoresTres($request, $response, $args){
+        $encuestas = encuesta::orderBy("calificacion_restaurante", "DESC")->limit(3)->get();
+        $payload = json_encode(array("listaEncuestas" => $encuestas));
 
         $response->getBody()->write($payload);
 
         return $response->withHeader("Content-Type", "application/json");
 
-        
     }
+
+    public function TraerPeoresTres($request, $response, $args){
+        $encuestas = encuesta::orderBy("calificacion_restaurante", "ASC")->limit(3)->get();
+        $payload = json_encode(array("listaEncuestas" => $encuestas));
+
+        $response->getBody()->write($payload);
+
+        return $response->withHeader("Content-Type", "application/json");
+
+    }
+
+    
 
     public function BorrarUno($request, $response, $args){
 
