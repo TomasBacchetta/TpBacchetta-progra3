@@ -209,15 +209,16 @@ class PedidoController {
                 $pedido->tiempo_estimado = $array[4];
                 $pedido->estado = $array[5];
                 $pedido->foto_mesa = $array[6];
-                $pedido->created_at = $array[7];
-                $pedido->updated_at = $array[8];
+                $pedido->con_retraso = $array[7];
+                $pedido->created_at = $array[8];
+                $pedido->updated_at = $array[9];
 
                 
             } else {
                 
                 $pedido = pedido::where("id", $array[0])->withTrashed()->first();
                 if ((!isset($pedido->deleted_at) || $pedido->deleted_at != '') &&
-                    ($array[9] == null || $array[9] == '')){
+                    ($array[10] == null || $array[10] == '')){
                     $pedido->deleted_at = null;
                     orden::RestaurarTodasLasOrdenesDeUnPedido($array[0]);
                 }

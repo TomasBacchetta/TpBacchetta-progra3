@@ -157,8 +157,9 @@ class MesaController {
             if (!mesa::existeMesa_PorId($array[0])){
                 $mesa->id = $array[0];
                 $mesa->estado = $array[1];
-                $mesa->created_at = $array[2];
-                $mesa->updated_at = $array[3];
+                $mesa->puntaje = $array[2];
+                $mesa->created_at = $array[3];
+                $mesa->updated_at = $array[4];
                 
 
                 
@@ -166,7 +167,7 @@ class MesaController {
                 
                 $mesa = mesa::where("id", $array[0])->withTrashed()->first();
                 if ((!isset($mesa->deleted_at) || $mesa->deleted_at != '') &&
-                    ($array[4] == null || $array[4] == '')){
+                    ($array[5] == null || $array[5] == '')){
                     $mesa->deleted_at = null;
                     
                 }

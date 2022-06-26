@@ -165,15 +165,16 @@ class EmpleadoController {
                 $empleado->clave = $array[2];
                 $empleado->puesto = $array[3];
                 $empleado->puntaje = $array[4];
-                $empleado->created_at = $array[5];
-                $empleado->updated_at = $array[6];
+                $empleado->estado = $array[5];
+                $empleado->created_at = $array[6];
+                $empleado->updated_at = $array[7];
                 
 
             } else {
                 
                 $empleado = empleado::where("id", $array[0])->withTrashed()->first();
                 if ((!isset($empleado->deleted_at) || $empleado->deleted_at != '') &&
-                    ($array[7] == null || $array[7] == '')){
+                    ($array[8] == null || $array[8] == '')){
                     $empleado->deleted_at = null;
                 }
 
