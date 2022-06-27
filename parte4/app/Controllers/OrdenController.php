@@ -100,53 +100,7 @@ class OrdenController {
 
     }
 
-    public function ModificarUno($request, $response, $args){
-        $param = $request->getParsedBody();
-        
-
-        $ordenModificada = new Orden();
-        $ordenModificada->pedido_id = $param["pedido_id"];
-        $ordenModificada->producto_id = $param["producto_id"];
-
-        //reincorporando stock al producto
-        $producto = producto::where("id", $ordenModificada->producto_id)->first();
-        $producto->stock += $ordenModificada->cantidad;
-
-        $ordenModificada->cantidad = $param["cantidad"];
-        
-        
-       
-        $ordenModificada->descripcion = $producto->descripcion;
-        $ordenModificada->subtotal = $producto->precio * $ordenModificada->cantidad;
-        $ordenModificada->tiempo_estimado = $producto->tiempo_estimado;
-        $ordenModificada->estado = "Iniciada";
-        
-        $ordenModificada->save();
-
-        //actualizando producto
-
-        $producto->stock -= $ordenModificada->cantidad;
-
-        $producto->save();
     
-        
-        //actualizando pedido (la orden modificada condiciona al pedido)
-        
-        $pedidoActualizado = pedido::where("id", $ordenModificada->pedido_id);
-        $pedidoActualizado->total = orden::where("id", $ordenModificada->pedido_id)->sum("subtotal");
-        $pedidoActualizado->tiempo_estimado = orden::where("id", $ordenModificada->pedido_id)->max("tiempo_estimado");
-        $pedidoActualizado->estado = "Con orden";
-
-        $pedidoActualizado->save();
-
-        $payload = json_encode(array("mensaje" => "Orden modificada exitosamente"));
-
-        $response->getBody()->write($payload);
-
-        return $response->withHeader("Content-Type", "application/json");
-
-        
-    }
 
     public function CambiarEstado($request, $response, $args){
         $param = $request->getParsedBody();
@@ -190,18 +144,19 @@ class OrdenController {
             //el empleado idoneo toma una orden En Preparacion y la cambia a Preparada
             //si esta fue la ultima orden que se necesitaba preparar para el pedido
             //vinculado, el pedido pasa a estar En Preparacion
-            registro::CrearRegistro(AutentificadorJWT::ObtenerId($token), "Termino la orden n°" . $id . "del pedido n°" . pedido::where("id", $pedido_id)->first()->id);
+            $mensaje = "Termino la orden n°" . $id ." del pedido n°" . pedido::where("id", $pedido_id)->first()->id;
             $ordenes = orden::ObtenerOrdenesAbiertasPorPedido($pedido_id);
             if (!$ordenes){//si ya no hay ordenes abiertas
                 $pedido = pedido::where("id", $pedido_id)->first();
-                registro::CrearRegistro(AutentificadorJWT::ObtenerId($token), "Termino la orden n°" . $id . ", que es la ultima que faltaba del pedido n°" . pedido::where("id", $pedido_id)->first()->id);
+                $mensaje .= ", que es la ultima que faltaba";
                 $pedido->estado = "Listo para servir";
                 if (Time::DiferenciaEntreTimestamps($ordenModificada->updated_at, Date::now()->subHours(3)) > Time::StringToSeconds($pedido->tiempo_estimado)){
                     $pedido->con_retraso = "SI";
+                    $mensaje .= ". Con retraso";
                 }
                 $pedido->save();
             }
-
+            registro::CrearRegistro(AutentificadorJWT::ObtenerId($token), $mensaje);
             $ordenModificada->save();
             
         }

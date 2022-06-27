@@ -51,12 +51,12 @@ class estadisticas {
                     El empleado con menor puntaje es: ' . $empleadoMenor->nombre  . ' con '. $empleadoMenor->puntaje . ' puntos<br>
                     La puntuacion del restaurante es de:' . self::ObtenerPuntajeDelRestaurante() . '<br>
 
-                    <h1>Estadisticas a 30 dias desde la fecha ' . date("y-m-d") . '</h1> <br>
+                    <h1>Estadisticas a 30 dias a la fecha ' . date("d-m-Y") . '</h1> <br>
                     
                     La mesa mas usada fue la N°: ' . $mesaMasUsada[0]  . ', usada ' . $mesaMasUsada[1]  . ' veces <br>
                     La mesa menos usada fue la N°: ' . $mesaMenosUsada[0]  . ', usada ' . $mesaMenosUsada[1]  . ' veces <br>
-                    La mesa que mas facturo fue la N°: ' . $mesaMasFacturo[0] . ' ,por un monto de $' . $mesaMasFacturo[1] . '<br>
-                    La mesa que menos facturo fue la N°: ' . $mesaMenosFacturo[0] . ' ,por un monto de $' . $mesaMenosFacturo[1] . '<br> 
+                    La mesa que mas facturo fue la N°: ' . $mesaMasFacturo[0] . ', por un monto de $' . $mesaMasFacturo[1] . '<br>
+                    La mesa que menos facturo fue la N°: ' . $mesaMenosFacturo[0] . ', por un monto de $' . $mesaMenosFacturo[1] . '<br> 
                     Se hicieron  ' . self::CantidadDePedidosEn30Dias() . ' pedidos <br>
                     Hubo ' . self::CantidadDePedidosConRetrasoEn30Dias() . ' pedidos con retraso <br> 
                     Hubo ' . self::ObtenerCantidadDePedidosConRechazoEn30Dias() . ' pedidos cancelados <br> 

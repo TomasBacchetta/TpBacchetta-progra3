@@ -55,7 +55,7 @@ class PedidoController {
         $pedidoNuevo->foto_mesa = $destino;
         $pedidoNuevo->save();
 
-        registro::CrearRegistro($id_empleado, "Creo pedido");
+        registro::CrearRegistro($id_empleado, "Creo pedido N°" . $id);
 
         $payload = json_encode(array("mensaje" => "Pedido cargado con éxito con id: " . $id));
         $response->getBody()->write($payload);
@@ -171,7 +171,8 @@ class PedidoController {
         
         $pedidoModificado = pedido::where("id", $id)->first();
         $pedidoModificado->mesa_id = $param["mesa_id"];
-        $pedidoModificado->estado = $param["estado"];
+        $pedidoModificado->mesa_id = $param["mozo_id"];
+       
         
 
         $pedidoModificado->save();

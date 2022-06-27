@@ -70,17 +70,16 @@ class EmpleadoController {
         $nombre = $param["nombre"];
         $clave = $param["clave"];
         $puesto = $param["puesto"];
-        $dni = $param["dni"];
 
         $empleadoModificado = empleado::where('id', $id)->first();
         $empleadoModificado->nombre = $nombre;
         $empleadoModificado->clave = $clave;
         $empleadoModificado->puesto = $puesto;
-        $empleadoModificado->dni = $dni;
+       
 
         $empleadoModificado->update();
 
-        $payload = json_encode(array("mensaje" => "Empleado modificado exitosamente"));
+        $payload = json_encode(array("mensaje" => "Empleado" . $id . "modificado exitosamente"));
 
         $response->getBody()->write($payload);
 

@@ -159,15 +159,22 @@ class ValidadorParams {
 
     public static function ValidarParamsMesas($request, $handler){
         $method = $request->getMethod();
-       
+        
         
         $response = new Response();
 
         if ($method == "PUT"){
+            $url = $request->getUri()->getPath();
+            $mesa_id = explode('/', $url)[2];
             $dato = $request->getParsedBody();
             $error = false;
             $mensaje = "";
             
+            if (!mesa::existeMesa_PorIdSinBorradas($mesa_id)){
+                $payload = json_encode(array("Mensaje" => "No existe esa mesa"));
+                $response->getBody()->write($payload);
+                return $response->withStatus(403);
+            }
             
             if (!isset($dato)){
                 $payload = json_encode(array("Mensaje" => "Faltan todos los parametros"));
@@ -180,7 +187,6 @@ class ValidadorParams {
                     $error = true;   
                 } else {//si existe el parametro
                     if ($dato["estado"] == "" || (
-                        $dato["estado"] != "Con cliente esperando pedido" &&
                         $dato["estado"] != "Con cliente comiendo" &&
                         $dato["estado"] != "Con cliente pagando" &&
                         $dato["estado"] != "Cerrada"
@@ -192,13 +198,28 @@ class ValidadorParams {
                         $token = trim(explode("Bearer", $header)[1]);
                         if ($dato["estado"] == "Cerrada" && AutentificadorJWT::ObtenerPuesto($token) != "admin"){
                             $payload = json_encode(array("Mensaje" => "Solo los admins pueden cerrar la mesa"));
-                                    $response->getBody()->write($payload);
-                                    return $response->withStatus(403);
+                            $response->getBody()->write($payload);
+                            return $response->withStatus(403);
                         }
                         if ($dato["estado"] != "Cerrada" && AutentificadorJWT::ObtenerPuesto($token) == "admin"){
                             $payload = json_encode(array("Mensaje" => "Solo los mozos pueden hacer eso"));
-                                    $response->getBody()->write($payload);
-                                    return $response->withStatus(403);
+                            $response->getBody()->write($payload);
+                            return $response->withStatus(403);
+                        }
+                        if ($dato["estado"] == "Con cliente pagando" && mesa::where("id", $mesa_id)->first()->estado != "Con cliente comiendo"){
+                            $payload = json_encode(array("Mensaje" => "El cliente no recibio el pedido todavia"));
+                            $response->getBody()->write($payload);
+                            return $response->withStatus(403);
+                        }
+                        if ($dato["estado"] == "Con cliente comiendo" && mesa::where("id", $mesa_id)->first()->estado != "Con cliente esperando pedido"){
+                            $payload = json_encode(array("Mensaje" => "El cliente no pidio nada todavia"));
+                            $response->getBody()->write($payload);
+                            return $response->withStatus(403);
+                        }
+                        if (mesa::where("id", $mesa_id)->first()->estado == "Cerrada"){
+                            $payload = json_encode(array("Mensaje" => "La mesa esta vacia"));
+                            $response->getBody()->write($payload);
+                            return $response->withStatus(403);
                         }
                     }
                 }
@@ -227,14 +248,13 @@ class ValidadorParams {
 
     public static function ValidarParamsProductos($request, $handler){
         $method = $request->getMethod();
-        
         $response = new Response();
+        $error = false;
+        $mensaje = "";
 
-        if ($method == "POST" || $method == "PUT"){
+
+        if ($method == "POST"){
             $dato = $request->getParsedBody();
-            $error = false;
-            $mensaje = "";
-            
             
             if (!isset($dato)){
                 $payload = json_encode(array("Mensaje" => "Faltan todos los parametros"));
@@ -246,7 +266,7 @@ class ValidadorParams {
                     $mensaje .= "Falta el parametro de la descripcion. ";
                     $error = true;   
                 } else {//si existe el parametro
-                    if ($method == "POST"){//esto es porque en put es solo modificacion
+                    if ($method == "POST"){
                         if (producto::existeProducto($dato["descripcion"])){
                             $mensaje .= "Ya existe ese producto. ";
                             $error = true;
@@ -296,14 +316,34 @@ class ValidadorParams {
                     $error = true;  
                 }
                 
-               
-                
-                
-                
                     
             }
 
             
+        }
+
+        if ($method == "PUT"){
+            $url = $request->getUri()->getPath();
+            $producto_id = explode('/', $url)[2];
+            if (!producto::existeProducto_PorIdSinBorrados($producto_id)){
+                $mensaje .= "No existe ese producto. ";
+                $error = true;  
+            }
+        }
+
+        if ($method == "DELETE"){
+            $url = $request->getUri()->getPath();
+            $producto_id = explode('/', $url)[2];
+            if (!producto::existeProducto_PorIdSinBorrados($producto_id)){
+                $mensaje .= "No existe ese producto. ";
+                $error = true;  
+            }
+        }
+
+        if ($error){
+            $payload = json_encode(array("Mensaje" => $mensaje));
+            $response->getBody()->write($payload);
+            return $response->withStatus(403);
         }
         
 
@@ -422,6 +462,29 @@ class ValidadorParams {
         
     }
 
+
+    public function ValidarCancelacionPedido($request, $handler){
+        $url = $request->getUri()->getPath();
+        $pedido_id = explode('/', $url)[2];
+        $response = new Response();
+
+        if (!pedido::existePedido_PorId_SinBorrados($pedido_id)){
+            $payload = json_encode(array("Mensaje" => "No existe el pedido"));
+            $response->getBody()->write($payload);
+            return $response->withStatus(403);  
+        }
+        $pedido = pedido::where("id", $pedido_id)->first();
+
+        if ($pedido->estado == "Servido" || $pedido->estado == "Pagado"){
+            $payload = json_encode(array("Mensaje" => "El pedido ya no puede cancelarse"));
+            $response->getBody()->write($payload);
+            return $response->withStatus(403);  
+        }
+
+        $response = $handler->handle($request);
+        return $response;
+    }
+
     public function ValidarPedidoParaFacturar($request, $handler){
         $url = $request->getUri()->getPath();
         $pedido_id = explode('/', $url)[2];
@@ -513,6 +576,16 @@ class ValidadorParams {
 
         $response = $handler->handle($request);
         return $response;
+    }
+
+
+
+    public function ValidarCambioEstadoOrden($request, $handler){
+        
+    }
+
+    public function ValidarCambioEstadoEmpleado($request, $handler){
+        
     }
 
     

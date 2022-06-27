@@ -53,6 +53,15 @@ class mesa extends Model{
         }
         
     }
+    public static function existeMesa_PorIdSinBorradas($id){
+        $mesa = mesa::where("id", "=", $id)->first();
+        if (isset($mesa)){
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
 
     public static function MesaTienePedido($id){
         $pedido = pedido::where("mesa_id", $id)->first();

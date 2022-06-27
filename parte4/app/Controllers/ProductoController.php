@@ -74,13 +74,13 @@ class ProductoController {
    
 
     public function ModificarUno($request, $response, $args){
-        $param = $request->getParsedBody();
+        $params = $request->getParsedBody();
         $id = $args["id"];
-        $descripcion = $param["descripcion"];
-        $precio = $param["precio"];
-        $stock = $param["stock"];
-        $sector = $param["sector"];
-        $tiempo_estimado = $param["tiempo_estimado"];
+        $descripcion = $params["descripcion"];
+        $precio = $params["precio"];
+        $stock = $params["stock"];
+        $sector = $params["sector"];
+        $tiempo_estimado = $params["tiempo_estimado"];
 
         $productoAModificar = producto::where('id', $id)->first();
         $productoAModificar->descripcion = $descripcion;
