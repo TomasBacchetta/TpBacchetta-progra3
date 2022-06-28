@@ -21,6 +21,7 @@ namespace App\Models;
 
 use \Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Capsule\Manager as Capsule;
 
 class mesa extends Model{
 
@@ -72,6 +73,32 @@ class mesa extends Model{
         }
         
     }
+
+    public static function actualizarPuntajeMesaDeUnPedido($pedido_id){
+        $pedido = pedido::where("id", $pedido_id)->first();
+        $mesa = mesa::where("id", $pedido->mesa_id)->first();
+        $sumatoriaPuntajes = 0;
+
+        $encuestasDeEsaMesa = Capsule::table('encuestas')
+        ->join('pedidos', 'pedidos.id', '=', 'encuestas.pedido_id')
+        ->select('encuestas.*')
+        ->where('pedidos.mesa_id', $mesa->id)->get();
+
+        if (count($encuestasDeEsaMesa) > 0){
+            foreach ($encuestasDeEsaMesa as $eEncuesta){
+                $sumatoriaPuntajes += $eEncuesta->calificacion_mesa;
+            }
+            
+            $puntaje = $sumatoriaPuntajes/count($encuestasDeEsaMesa);
+            $mesa->puntaje = $puntaje;
+            $mesa->save();
+        }
+
+    }
+            
+
+            
+        
 }
 
 

@@ -38,6 +38,8 @@ class estadisticas {
     public static function ImprimirEstadisticasGenerales(){
         $empleadoMayor = empleado::where("puntaje", empleado::max("puntaje"))->first();
         $empleadoMenor = empleado::where("puntaje", empleado::min("puntaje"))->first();
+        $mesaMayor = mesa::where("puntaje", empleado::max("puntaje"))->first();
+        $mesaMenor = mesa::where("puntaje", empleado::min("puntaje"))->first();
         $mesaMasUsada = self::ObtenerMesaMasUsadaEnTreintaDias();
         $mesaMenosUsada = self::ObtenerMesaMenosUsadaEnTreintaDias();
         $mesaMasFacturo = self::ObtenerMesaQueMasFacturoEnTreintaDias();
@@ -49,6 +51,8 @@ class estadisticas {
                     <h1>Estadisticas historicas</h1> <br>
                     El empleado con mayor puntaje es: ' . $empleadoMayor->nombre . ' con '. $empleadoMayor->puntaje  . ' puntos<br>
                     El empleado con menor puntaje es: ' . $empleadoMenor->nombre  . ' con '. $empleadoMenor->puntaje . ' puntos<br>
+                    La mesa con mayor puntaje es la N°: ' . $mesaMayor->id . ' con ' . $mesaMayor->puntaje . ' puntos<br>
+                    La mesa con menor puntaje es la N°: ' . $mesaMenor->id . ' con ' . $mesaMenor->puntaje . ' puntos<br>
                     La puntuacion del restaurante es de:' . self::ObtenerPuntajeDelRestaurante() . '<br>
 
                     <h1>Estadisticas a 30 dias a la fecha ' . date("d-m-Y") . '</h1> <br>
@@ -257,6 +261,7 @@ class estadisticas {
 
         $productoQueMasSeVendio = orden::select('descripcion')
         ->whereBetween('created_at', [$fechaMesAtras, $fechaActual])
+        ->where('estado', "Listo para servir")
         ->groupBy('descripcion')
         ->orderByRaw('COUNT(*) DESC')
         ->take(1)
@@ -271,6 +276,7 @@ class estadisticas {
         $fechaMesAtras = Date::now()->subHours(3)->subDays(30);
         $productoQueMenosSeVendio = orden::select('descripcion')
         ->whereBetween('created_at', [$fechaMesAtras, $fechaActual])
+        ->where('estado', "Listo para servir")
         ->groupBy('descripcion')
         ->orderByRaw('COUNT(*) ASC')
         ->take(-1)
@@ -282,7 +288,6 @@ class estadisticas {
     public static function ObtenerFacturadoEntreDosFechas($desde, $hasta){
         $desde = time::StrFechaToTimestamp($desde);
         $hasta = time::StrFechaToTimestamp($hasta);
-        var_dump($desde);
         $facturado = pedido::where("estado", "Pagado")
         ->whereBetween('created_at', [$desde, $hasta])
         ->sum("total");

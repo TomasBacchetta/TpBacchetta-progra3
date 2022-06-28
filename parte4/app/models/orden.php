@@ -72,10 +72,10 @@ class orden extends Model{
     }
     
     public static function ObtenerOrdenesEnPreparacionPorPedido($pedido_id){
-        $ordenes = orden::where("pedido_id", $pedido_id)->get();
+        $orden = orden::where("pedido_id", $pedido_id)->where("estado", "En preparacion")->first();
 
-        if (isset($ordenes)){
-            return $ordenes;
+        if (isset($orden)){
+            return $orden;
         } else {
             return false;
         }
@@ -89,6 +89,7 @@ class orden extends Model{
             return false;
         }
     }
+    
 
     public static function ObtenerSectorPorId($id){
         return orden::where("id", $id)->value("sector");

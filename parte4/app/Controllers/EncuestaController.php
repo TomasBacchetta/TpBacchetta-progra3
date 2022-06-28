@@ -10,6 +10,7 @@ BASE DE DATOS
 */
 use \App\Models\encuesta as encuesta;
 use \App\Models\empleado as empleado;
+use \App\Models\mesa as mesa;
 use GuzzleHttp\Psr7\Stream;
 
 
@@ -46,7 +47,7 @@ class EncuestaController {
         $encuestaNueva->save();
 
         empleado::actualizarPuntajeEmpleadosDeUnPedido($pedido_id);
-        //actualizar puntaje mesa
+        mesa::actualizarPuntajeMesaDeUnPedido($pedido_id);
 
         $payload = json_encode(array("mensaje" => "Encuesta generada. Gracias por su participacion"));
         $response->getBody()->write($payload);

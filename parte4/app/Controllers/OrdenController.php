@@ -110,6 +110,7 @@ class OrdenController {
         $ordenModificada = orden::where("id", $id)->first();
         $ordenModificada->estado = $param["estado"];
         
+        
 
         $pedido_id = orden::where("id", $id)->value("pedido_id");
 
@@ -139,13 +140,14 @@ class OrdenController {
             
         }
         
+        
 
         if ($ordenModificada->estado == "Listo para servir"){
             //el empleado idoneo toma una orden En Preparacion y la cambia a Preparada
             //si esta fue la ultima orden que se necesitaba preparar para el pedido
             //vinculado, el pedido pasa a estar En Preparacion
             $mensaje = "Termino la orden n°" . $id ." del pedido n°" . pedido::where("id", $pedido_id)->first()->id;
-            $ordenes = orden::ObtenerOrdenesAbiertasPorPedido($pedido_id);
+            $ordenes = orden::ObtenerOrdenesEnPreparacionPorPedido($pedido_id);
             if (!$ordenes){//si ya no hay ordenes abiertas
                 $pedido = pedido::where("id", $pedido_id)->first();
                 $mensaje .= ", que es la ultima que faltaba";

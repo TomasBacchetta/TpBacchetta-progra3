@@ -640,7 +640,7 @@
 					"response": []
 				},
 				{
-					"name": "Borrar un pedido",
+					"name": "Cancelar un pedido",
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -656,6 +656,22 @@
 								"17"
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar pedidos atrasados",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Listar pedidos cancelados",
+					"request": {
+						"method": "GET",
+						"header": []
 					},
 					"response": []
 				}
@@ -966,16 +982,31 @@
 				{
 					"name": "Login (crea un token)",
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "nombre",
+									"value": "Jorge",
+									"type": "default"
+								},
+								{
+									"key": "clave",
+									"value": "1234",
+									"type": "default"
+								}
+							]
+						},
 						"url": {
-							"raw": "localhost:777/Login",
+							"raw": "localhost:777/login",
 							"host": [
 								"localhost"
 							],
 							"port": "777",
 							"path": [
-								"Login"
+								"login"
 							]
 						}
 					},
