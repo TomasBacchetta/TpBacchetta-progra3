@@ -141,25 +141,24 @@ class OrdenController {
         }
         
         
-
+        $pedido = pedido::where("id", $pedido_id)->first();
         if ($ordenModificada->estado == "Listo para servir"){
             //el empleado idoneo toma una orden En Preparacion y la cambia a Preparada
             //si esta fue la ultima orden que se necesitaba preparar para el pedido
             //vinculado, el pedido pasa a estar En Preparacion
-            $mensaje = "Termino la orden n°" . $id ." del pedido n°" . pedido::where("id", $pedido_id)->first()->id;
-            $ordenes = orden::ObtenerOrdenesEnPreparacionPorPedido($pedido_id);
-            if (!$ordenes){//si ya no hay ordenes abiertas
-                $pedido = pedido::where("id", $pedido_id)->first();
-                $mensaje .= ", que es la ultima que faltaba";
-                $pedido->estado = "Listo para servir";
-                if (Time::DiferenciaEntreTimestamps($ordenModificada->updated_at, Date::now()->subHours(3)) > Time::StringToSeconds($pedido->tiempo_estimado)){
-                    $pedido->con_retraso = "SI";
-                    $mensaje .= ". Con retraso";
-                }
+            if (Time::DiferenciaEntreTimestamps($ordenModificada->updated_at, Date::now()->subHours(3)) > Time::StringToSeconds($pedido->tiempo_estimado)){
+                $pedido->con_retraso = "SI";
                 $pedido->save();
             }
-            registro::CrearRegistro(AutentificadorJWT::ObtenerId($token), $mensaje);
             $ordenModificada->save();
+            $ordenes = orden::ObtenerOrdenesEnPreparacionPorPedido($pedido_id);
+            if (!$ordenes){//si ya no hay ordenes en preparacion
+                
+                $pedido->estado = "Listo para servir";
+                $pedido->save();
+            }
+            registro::CrearRegistro(AutentificadorJWT::ObtenerId($token), "Termino la orden n°" . $id ." del pedido n°" . pedido::where("id", $pedido_id)->first()->id);
+            
             
         }
 
